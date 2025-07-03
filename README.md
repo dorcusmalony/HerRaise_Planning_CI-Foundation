@@ -61,10 +61,9 @@ HerRaise_Planning_CI-Foundation/
 
 ## Getting Started
 ```bash
-# Clone repository
-git clone <your-repo-url>
-cd HerRaise_Planning_CI-Foundation
+# Initialize your Git repository and create a main and develop branch.
 
+# A Pull Request before merging.
 # Install dependencies
 npm install
 
