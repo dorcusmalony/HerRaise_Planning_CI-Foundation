@@ -2,18 +2,20 @@ const request = require('supertest');
 const app = require('../backend/server');
 
 describe('HerRaise API', () => {
-  test('GET /api should return welcome message', async () => {
-    const response = await request(app).get('/api');
+  test('GET /api should return success message', async () => {
+    const response = await request(app)
+      .get('/api')
+      .expect(200);
     
-    expect(response.status).toBe(200);
     expect(response.body.message).toContain('HerRaise API');
     expect(response.body.status).toBe('Server running successfully');
   });
 
-  test('GET /api/health should return OK status', async () => {
-    const response = await request(app).get('/api/health');
+  test('GET /api/health should return health status', async () => {
+    const response = await request(app)
+      .get('/api/health')
+      .expect(200);
     
-    expect(response.status).toBe(200);
     expect(response.body.status).toBe('OK');
     expect(response.body.timestamp).toBeDefined();
   });

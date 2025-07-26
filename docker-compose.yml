@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      target: development
+    container_name: herraise-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    depends_on:
+      - postgres
+    networks:
+      - herraise-network
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: herraise-db
+    environment:
+      - POSTGRES_DB=herraise_db
+      - POSTGRES_USER=herraise_user
+      - POSTGRES_PASSWORD=herraise_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - herraise-network
+
+volumes:
+  postgres_data:
+
+networks:
+  herraise-network:
+    driver: bridge
