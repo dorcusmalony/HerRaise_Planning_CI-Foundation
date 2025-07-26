@@ -3,7 +3,7 @@
 ## Project Overview
 HerRaise is a web platform focused on empowering girls and young women in South Sudan (ages 10-28) through mentorship, inspirational stories, and community support. This repository contains the foundational MVP version.
 
-**Note**: This is a baseline/proof-of-concept version focused on demonstrating professional development practices, CI/CD setup, and core functionality rather than a complete application.
+**Note**: This is a baseline/proof-of-concept version focused on demonstrating professional development practices, CI/CD setup, containerization, and Infrastructure as Code rather than a complete application.
 
 ## Target Users
 - **Primary**: South Sudanese girls aged 10-28 (students, young professionals, those seeking support)
@@ -14,32 +14,23 @@ HerRaise is a web platform focused on empowering girls and young women in South 
 - **Issue Tracking**: ✅ Issues created for all milestones and current sprint tasks
 - **Workflow**: ✅ Active task tracking from "To Do" → "In Progress" → "Done"
 - **Milestones**: 
-  - ✅ Phase 1: Foundation & CI Setup (Current)
-  - 📋 Phase 2: Containerization 
-  - 📋 Phase 3: Infrastructure as Code
-  - 📋 Phase 4: Continuous Deployment
-  - 📋 Phase 5: Monitoring & Security
+  - ✅ Phase 1: Foundation & CI Setup
+  - 🚧 Phase 2: Containerization & Infrastructure as Code (Current)
+  - 📋 Phase 3: Continuous Deployment
+  - 📋 Phase 4: Monitoring & Security
 
 ## Repository Security
 - **Branch Protection**: Main branch requires PR + 1 reviewer + CI checks
 - **Workflow**: All changes via Pull Requests from develop/feature branches
 - **Code Reviews**: Mandatory reviewer approval before merge
 
-## Baseline Features (Current Sprint)
-**MVP Scope**: Demonstrating core functionality and professional practices
-- [ ] User Authentication (Register/Login) - Basic implementation
-- [ ] Story Submission Form - Simple CRUD operations
-- [ ] Basic Story Display - Database integration demo
-- [ ] Simple Admin Dashboard - Role-based access
-- [ ] Discussion Forum (Basic) - Community feature foundation
-
-**Success Criteria**: Working CI pipeline + basic CRUD + tests, not feature completeness
-
 ## Tech Stack
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: Node.js + Express.js
 - **Database**: PostgreSQL
 - **Testing**: Jest + Supertest
+- **Containerization**: Docker & Docker Compose
+- **Infrastructure**: Terraform (AWS)
 - **CI/CD**: GitHub Actions (automated linting + testing on PRs)
 
 ## Project Structure
@@ -49,23 +40,55 @@ HerRaise_Planning_CI-Foundation/
 ├── backend/           # Server-side API
 ├── database/          # Database scripts and migrations
 ├── tests/             # Unit and integration tests
+├── terraform/         # Infrastructure as Code
+├── scripts/           # Deployment scripts
 ├── .github/workflows/ # CI/CD pipeline
+├── docker-compose.yml # Local development environment
+├── Dockerfile         # Container configuration
 └── docs/              # Documentation
 ```
 
-## CI/CD Pipeline
-- **Triggers**: Automatic on Pull Requests to main
-- **Checks**: ESLint, Prettier, Jest unit tests
-- **Quality Gates**: All checks must pass before merge allowed
-- **Status**: ✅ Configured and enforcing code quality
-
 ## Getting Started
-```bash
-# Initialize your Git repository and create a main and develop branch.
 
-# A Pull Request before merging.
+### Prerequisites
+- Node.js 18+
+- Docker & Docker Compose
+- AWS CLI (for cloud deployment)
+- Terraform (for infrastructure)
+
+### Local Development with Docker
+
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd HerRaise_Planning_CI-Foundation
+```
+
+2. **Start with Docker Compose**
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f app
+
+# Stop services
+docker-compose down
+```
+
+3. **Access the application**
+- Application: http://localhost:3000
+- API: http://localhost:3000/api
+- Database: localhost:5432
+
+### Traditional Development Setup
+
+```bash
 # Install dependencies
 npm install
+
+# Start PostgreSQL (if not using Docker)
+# Configure DATABASE_URL in .env
 
 # Run tests
 npm test
@@ -74,19 +97,81 @@ npm test
 npm run dev
 ```
 
+### Docker Commands
+
+```bash
+# Build production image
+docker build -t herraise-app .
+
+# Run container
+docker run -p 3000:3000 herraise-app
+
+# Build and run with docker-compose
+docker-compose up --build
+```
+
+## Infrastructure Deployment
+
+### Prerequisites
+- AWS Account with configured credentials
+- Terraform installed
+
+### Deploy Infrastructure
+
+1. **Initialize Terraform**
+```bash
+cd terraform
+terraform init
+```
+
+2. **Plan deployment**
+```bash
+terraform plan
+```
+
+3. **Apply infrastructure**
+```bash
+terraform apply
+```
+
+4. **Deploy application**
+```bash
+# Make script executable
+chmod +x scripts/deploy.sh
+
+# Run deployment
+./scripts/deploy.sh
+```
+
+### Infrastructure Components
+- **VPC**: Custom VPC with public/private subnets
+- **ECR**: Container registry for Docker images
+- **ECS**: Fargate service for containerized app
+- **RDS**: PostgreSQL database
+- **ALB**: Application Load Balancer
+- **CloudWatch**: Logging and monitoring
+
 ## Development Workflow
 1. Create feature branch from develop
 2. Implement feature with tests
-3. Create Pull Request to main
-4. Wait for CI checks and reviewer approval
-5. Merge after all requirements met
+3. Test locally with Docker Compose
+4. Create Pull Request to main
+5. Wait for CI checks and reviewer approval
+6. Merge after all requirements met
 
-## Development Roadmap
-- **Phase 1**: Foundation & CI Setup ✅ (Current)
-- **Phase 2**: Containerization
-- **Phase 3**: Infrastructure as Code
-- **Phase 4**: Continuous Deployment
-- **Phase 5**: Monitoring & Security
+## Environment Variables
+Create `.env` file for local development:
+```
+NODE_ENV=development
+PORT=3000
+DATABASE_URL=postgresql://herraise_user:herraise_password@localhost:5432/herraise_db
+```
+
+## CI/CD Pipeline
+- **Triggers**: Automatic on Pull Requests to main
+- **Checks**: ESLint, Prettier, Jest unit tests, Docker build
+- **Quality Gates**: All checks must pass before merge allowed
+- **Status**: ✅ Configured and enforcing code quality
 
 ## Contributing
 This project follows professional development practices with:
@@ -94,6 +179,7 @@ This project follows professional development practices with:
 - Required PR reviews
 - Automated CI checks
 - Code quality standards
+- Containerized development environment
 
 ## Vision
 Building a platform that will provide long-term impact by supporting South Sudanese girls through mentorship and community empowerment.
