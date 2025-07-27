@@ -30,7 +30,7 @@ HerRaise is a web platform focused on empowering girls and young women in South 
 - **Database**: PostgreSQL
 - **Testing**: Jest + Supertest
 - **Containerization**: Docker & Docker Compose
-- **Infrastructure**: Terraform (AWS)
+- **Infrastructure**: Terraform (Azure)
 - **CI/CD**: GitHub Actions (automated linting + testing on PRs)
 
 ## Project Structure
@@ -53,7 +53,7 @@ HerRaise_Planning_CI-Foundation/
 ### Prerequisites
 - Node.js 18+
 - Docker & Docker Compose
-- AWS CLI (for cloud deployment)
+- Azure CLI (for cloud deployment)
 - Terraform (for infrastructure)
 
 ### Local Development with Docker
@@ -113,7 +113,7 @@ docker-compose up --build
 ## Infrastructure Deployment
 
 ### Prerequisites
-- AWS Account with configured credentials
+- Azure Account with configured credentials
 - Terraform installed
 
 ### Deploy Infrastructure
@@ -144,12 +144,11 @@ chmod +x scripts/deploy.sh
 ```
 
 ### Infrastructure Components
-- **VPC**: Custom VPC with public/private subnets
-- **ECR**: Container registry for Docker images
-- **ECS**: Fargate service for containerized app
-- **RDS**: PostgreSQL database
-- **ALB**: Application Load Balancer
-- **CloudWatch**: Logging and monitoring
+- **Virtual Network**: Custom VNet with subnets
+- **ACR**: Azure Container Registry for Docker images
+- **App Service**: Containerized web application hosting
+- **PostgreSQL**: Azure Database for PostgreSQL
+- **Networking**: Virtual network integration
 
 ## Development Workflow
 1. Create feature branch from develop
@@ -182,4 +181,5 @@ This project follows professional development practices with:
 - Containerized development environment
 
 ## Vision
+Building a platform that will provide long-term impact by supporting South Sudanese girls through mentorship and community empowerment.
 Building a platform that will provide long-term impact by supporting South Sudanese girls through mentorship and community empowerment.
