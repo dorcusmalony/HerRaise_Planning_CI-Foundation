@@ -14,10 +14,10 @@ HerRaise is a web platform focused on empowering girls and young women in South 
 - **Issue Tracking**: ✅ Issues created for all milestones and current sprint tasks
 - **Workflow**: ✅ Active task tracking from "To Do" → "In Progress" → "Done"
 - **Milestones**: 
-  - ✅ Phase 1: Foundation & CI Setup
-  - 🚧 Phase 2: Containerization & Infrastructure as Code (Current)
-  - 📋 Phase 3: Continuous Deployment
-  - 📋 Phase 4: Monitoring & Security
+  -  Phase 1: Foundation & CI Setup
+  - Phase 2: Containerization & Infrastructure as Code (Current)
+  - Phase 3: Continuous Deployment
+  - Phase 4: Monitoring & Security
 
 ## Repository Security
 - **Branch Protection**: Main branch requires PR + 1 reviewer + CI checks
@@ -30,7 +30,7 @@ HerRaise is a web platform focused on empowering girls and young women in South 
 - **Database**: PostgreSQL
 - **Testing**: Jest + Supertest
 - **Containerization**: Docker & Docker Compose
-- **Infrastructure**: Terraform (AWS)
+- **Infrastructure**: Terraform (Azure)
 - **CI/CD**: GitHub Actions (automated linting + testing on PRs)
 
 ## Project Structure
@@ -53,7 +53,7 @@ HerRaise_Planning_CI-Foundation/
 ### Prerequisites
 - Node.js 18+
 - Docker & Docker Compose
-- AWS CLI (for cloud deployment)
+- Azure CLI (for cloud deployment)
 - Terraform (for infrastructure)
 
 ### Local Development with Docker
@@ -113,7 +113,7 @@ docker-compose up --build
 ## Infrastructure Deployment
 
 ### Prerequisites
-- AWS Account with configured credentials
+- Azure Account with configured credentials
 - Terraform installed
 
 ### Deploy Infrastructure
@@ -144,12 +144,11 @@ chmod +x scripts/deploy.sh
 ```
 
 ### Infrastructure Components
-- **VPC**: Custom VPC with public/private subnets
-- **ECR**: Container registry for Docker images
-- **ECS**: Fargate service for containerized app
-- **RDS**: PostgreSQL database
-- **ALB**: Application Load Balancer
-- **CloudWatch**: Logging and monitoring
+- **Virtual Network**: Custom VNet with subnets
+- **ACR**: Azure Container Registry for Docker images
+- **App Service**: Containerized web application hosting
+- **PostgreSQL**: Azure Database for PostgreSQL
+- **Networking**: Virtual network integration
 
 ## Development Workflow
 1. Create feature branch from develop
@@ -170,7 +169,7 @@ DATABASE_URL=postgresql://herraise_user:herraise_password@localhost:5432/herrais
 ## CI/CD Pipeline
 - **Triggers**: Automatic on Pull Requests to main
 - **Checks**: ESLint, Prettier, Jest unit tests, Docker build
-- **Quality Gates**: All checks must pass before merge allowed
+- **Quality Gates**: All checks must pass before merging is allowed
 - **Status**: ✅ Configured and enforcing code quality
 
 ## Contributing
@@ -183,3 +182,13 @@ This project follows professional development practices with:
 
 ## Vision
 Building a platform that will provide long-term impact by supporting South Sudanese girls through mentorship and community empowerment.
+Building a platform that will provide long-term impact by supporting South Sudanese girls through mentorship and community empowerment.
+
+
+
+
+
+
+
+
+
