@@ -119,6 +119,11 @@ I have reviewed a peer's pull request as part of the assignment:
  **Pending deployment**: Will be updated after manual deployment
  8224be62537911738fd57ca1d7919926add740e3
 
+
+Here is the public URL of my deployed application:
+
+
+
 Here is the public URL of my deployed application:
 
 
@@ -135,8 +140,15 @@ Below are screenshots of the resources I provisioned in Azure:
 ### Resource Group (HerRaise_RG)
 ![Resource Group](docs/screenshot(327).png)
 
+
 ### App Service (herraise-app)
 ![App Service](docs/screenshot(327).png)
+
+
+
+### App Service (herraise-app)
+![App Service](docs/screenshot(327).png)
+
 
 ### Azure Container Registry (herraise)
 ![ACR](docs/screenshot(333).png)
