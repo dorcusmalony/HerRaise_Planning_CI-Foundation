@@ -83,8 +83,7 @@ I have reviewed a peer's pull request as part of the assignment:
 -  Perform manual cloud deployment
 -  Conduct peer code review
 -  Document the process and challenges
- 8224be62537911738fd57ca1d7919926add740e3
-
+ 
 ## Deliverables
 
 ### 1. Containerization 
