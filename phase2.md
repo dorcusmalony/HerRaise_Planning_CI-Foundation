@@ -43,7 +43,7 @@ Below are screenshots of the resources I provisioned in Azure:
 
 I have reviewed a peer's pull request as part of the assignment:
 
-**Peer PR Review**: [To be updated with actual PR link]
+**Peer PR Review**: []
 
 
 

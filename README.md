@@ -170,7 +170,8 @@ Create `.env` file for local development:
 ```
 NODE_ENV=development
 PORT=3000
-DATABASE_URL=postgresql://herraise_user:herraise_password@localhost:5432/herraise_db
+DATABASE_URL=postgresql:
+herraise_user:herraise_password@localhost:5432/herraise_db
 ```
 
 ## CI/CD Pipeline
