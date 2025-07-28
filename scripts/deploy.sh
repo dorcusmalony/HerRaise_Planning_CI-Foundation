@@ -12,23 +12,23 @@ echo " Starting HerRaise deployment..."
 
 # Build Docker image
 echo " Building Docker image..."
-docker build -t ${PROJECT_NAME}-app:latest .
+docker build -t ${PROJECT_NAME}:latest .
 
 # Get ACR login server
 ACR_LOGIN_SERVER="${REGISTRY_NAME}.azurecr.io"
 
 # Login to ACR
-echo "🔐 Logging into Azure Container Registry..."
+echo " Logging into Azure Container Registry..."
 az acr login --name ${REGISTRY_NAME}
 
 # Tag and push image
-echo "📤 Pushing image to ACR..."
-docker tag ${PROJECT_NAME}-app:latest ${ACR_LOGIN_SERVER}/${PROJECT_NAME}-app:latest
-docker push ${ACR_LOGIN_SERVER}/${PROJECT_NAME}-app:latest
+echo " Pushing image to ACR..."
+docker tag ${PROJECT_NAME}:latest ${ACR_LOGIN_SERVER}/${PROJECT_NAME}:latest
+docker push ${ACR_LOGIN_SERVER}/${PROJECT_NAME}:latest
 
 # Optional: Restart App Service to pull latest image
-echo "🔄 Restarting App Service..."
+echo " Restarting App Service..."
 az webapp restart --name ${PROJECT_NAME}-app --resource-group ${RESOURCE_GROUP}
 
-echo "✅ Deployment complete!"
-echo "📄 Check your App Service at: https://${PROJECT_NAME}-app.azurewebsites.net"
+echo " Deployment complete!"
+echo " Check your App Service at: https://${PROJECT_NAME}-app.azurewebsites.net"
