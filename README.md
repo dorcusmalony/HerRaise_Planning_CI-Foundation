@@ -182,7 +182,7 @@ herraise_user:herraise_password@localhost:5432/herraise_db
 
 
 - **Quality Gates**: All checks must pass before merging is allowed
- 
+
 - **Status**: Configured and enforcing code quality
 
 ## Contributing
