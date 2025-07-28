@@ -19,7 +19,8 @@
 
 Here is the public URL of my deployed application:
 
- **Live Application**: [Live link to myherraisehub website](https://herraisehub.azurewebsites.net/)
+ **Live Application**: [Live link to myherraisehub website](https://herraisehub.azurewebsites.net/
+ )
 
 
 
@@ -41,9 +42,12 @@ Below are screenshots of the resources I provisioned in Azure:
 
 ##  3. Peer Review Pull Request
 
-I have reviewed a peer's pull request as part of the assignment:
+I have reviewed a abuk work as my peer 
 
-**Peer PR Review**: []
+
+**Peer PR Review**: [Abuk pull review](https://github.com/AbukDuot/JobBridge/pull/17)
+
+
 
 
 
@@ -53,6 +57,7 @@ I have reviewed a peer's pull request as part of the assignment:
 - **Azure Provider Learning**: Acess  Azure Terraform providers was not easy as and it  required understanding different resource structures
 - **Resource Dependencies**: Managing the correct order of resource creation, especially with networking and database connections was that easy 
 - **Terraform State**: Understanding how to properly manage Terraform state for team collaboration
+
 
 ### Manual Deployment Process
 - **Container Registry Setup**: Initially struggled with ACR authentication and permissions
@@ -74,16 +79,7 @@ I have reviewed a peer's pull request as part of the assignment:
 - **Database**: PostgreSQL Flexible Server
 - **Networking**: Virtual Network with dedicated subnets
 
-### Deployment Commands Used
-```bash
-# Infrastructure provisioning
 
-- Containerize the HerRaise application
-- Define cloud infrastructure as code using Terraform
--  Perform manual cloud deployment
--  Conduct peer code review
--  Document the process and challenges
- 8224be62537911738fd57ca1d7919926add740e3
 
 ## Deliverables
 
@@ -107,10 +103,6 @@ I have reviewed a peer's pull request as part of the assignment:
 -  Deploy via App Service console/CLI
 -  Verify live application URL
 
-### 4. Peer Review 
--  Review peer's Pull Request
--  Provide constructive feedback
-- Document review process
 
 
 ## 1. Live Deployed URL
@@ -120,7 +112,6 @@ I have reviewed a peer's pull request as part of the assignment:
  8224be62537911738fd57ca1d7919926add740e3
 
 
-Here is the public URL of my deployed application:
 
 
 
@@ -129,9 +120,6 @@ Here is the public URL of my deployed application:
 
 **Live Application**: [HerRaise Hub](https://herraisehub.azurewebsites.net/)
 
-## Infrastructure Screenshots
- **Screenshots will be added after successful provisioning**
-8224be62537911738fd57ca1d7919926add740e3
 
 ## 2. Screenshots of Provisioned Resources
 
@@ -155,11 +143,7 @@ Below are screenshots of the resources I provisioned in Azure:
 
 *Screenshots are saved in the `docs/` folder in the repository.*
 
-## 3. Peer Review Pull Request
 
-I have reviewed a peer's pull request as part of the assignment:
-
-**Peer PR Review**: [To be updated with actual PR link when peer review is completed]
 
 ## 4. Reflection on Challenges
 
@@ -215,19 +199,9 @@ docker push herraise.azurecr.io/herraise:latest
 ./scripts/deploy.sh
 ```
 
-## Next Steps
-1. Complete manual deployment
-2.  Verify application functionality
-3.  Document deployment process
-4.  Complete peer review assignment
-5.  Prepare for Phase 3 (Continuous Deployment)
 
----
 
-**Last Updated**: July 25, 2024
-**Status**: Phase 2 Complete
-**Phase**: 2 of 5
-- **Security**: Non-root user
+
 
 ### Infrastructure Specifications
 - **Cloud**: Microsoft Azure
@@ -237,22 +211,6 @@ docker push herraise.azurecr.io/herraise:latest
 - **Registry**: Azure Container Registry
 - **Networking**: Virtual Network with dedicated subnets
 
-### Commands Used
-
-```bash
-# Local Docker testing
-docker-compose up -d
-docker build -t herraise-app .
-
-# Terraform deployment
-
-ea33925c131ac0a8e254adffe5ae0f9b44d65fcd
-
-ea33925c131ac0a8e254adffe5ae0f9b44d65fcd
- 8224be62537911738fd57ca1d7919926add740e3
-terraform init
-terraform plan
-terraform apply
 
  
 # Container deployment
@@ -261,13 +219,11 @@ terraform apply
 
 
 
-##  Last Updated
-**25 July** - Phase 2 Complete
 
 
 
 
- 8224be62537911738fd57ca1d7919926add740e3
+
 # Azure deployment
 ./scripts/deploy.sh
 ```
@@ -281,7 +237,7 @@ terraform apply
 
 ---
 
-**Last Updated**: [25 July]
+
 **Status**: Ready for Manual Deployment
 **Phase**: 2 of 5
 - **Region**: us-east-1
@@ -290,21 +246,6 @@ terraform apply
 - **Networking**: Custom VPC with HA across 2 AZs
 - **Storage**: ECR for container images
 
-### Commands Used
-
-```bash
-# Local Docker testing
-docker-compose up -d
-docker build -t herraise-app .
-
-# Terraform deployment
-terraform init
-terraform plan
-terraform apply
-
-# AWS deployment
-./scripts/deploy.sh
-```
 
 ## Next Steps
 1. Complete manual deployment
@@ -312,6 +253,7 @@ terraform apply
 3. Document any deployment issues
 4. Prepare for Phase 3 (Continuous Deployment)
 5. Set up monitoring and alerting
+
 
 
 
