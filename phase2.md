@@ -26,15 +26,12 @@ Here is the public URL of my deployed application:
 
 ##  2. Screenshots of Provisioned Resources
 
-Below are screenshots of the resources I provisioned in Azure:
-
 ###  Resource Group (HerRaise_RG)
-[Resource Group](docs/screenshot(327).png)
+[Resource Group](./docs/Screenshot%20(327).png)
 ###  App Service (herraise-app)
-[App services](docs/screenshot(327).png)
+[App services](./docs/Screenshot%20(328).png)
 ###  Azure Container Registry (herraise)
-[ACR](docs/screenshot(333).png)
-
+[ACR](./docs/Screenshot%20(333).png)
 
 *Screenshots are saved in the `docs/screenshot/` folder in the repository.*
 
