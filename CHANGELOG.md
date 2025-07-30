@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed frontend serving issue where root path was returning empty response
+- Added explicit route handler for serving index.html at root path
+- Fixed CI pipeline failure in security scanning step
+- Improved security audit handling to be truly non-blocking
+
+### Security
+- Fixed critical vulnerability in form-data package (GHSA-fjxv-7rqg-78g4)
+- Enhanced security scanning to capture detailed audit results
+- Added artifact upload for security audit reports
+- Updated security scanning to be informational rather than blocking
+
 ## [1.2.0] - 2025-07-30
 
 ### Added
