@@ -66,10 +66,17 @@ chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 - **Quality Gates**: Automated CI checks (linting, testing, Docker builds)
 
 ### Development Milestones
+ 
 - [x] **Phase 1**: Foundation & CI Setup
 - [ ] **Phase 2**: Containerization & Infrastructure as Code
 - [ ] **Phase 3**: Continuous Deployment Pipeline
 - [ ] **Phase 4**: Monitoring & Security Hardening
+
+-  **Phase 1**: Foundation & CI Setup
+-  **Phase 2**: Containerization & Infrastructure as Code
+-  **Phase 3**: Continuous Deployment Pipeline
+-  **Phase 4**: Monitoring & Security Hardening
+
 
 ## Repository Structure
 
@@ -143,9 +150,11 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 - **Discussions**: Community support via GitHub Discussions
 - **Documentation**: `/docs` directory for detailed guides
 
+
 ---
 
 **Vision**: Building sustainable pathways for South Sudanese girls to overcome barriers and achieve their full potential through technology-enabled mentorship and community support.
+
 
 **License**: MIT | **Team**: HerRaise Development Team
 ./scripts/deploy.sh
