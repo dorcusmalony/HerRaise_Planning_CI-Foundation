@@ -1,161 +1,163 @@
-# HerRaise - Mentorship & Empowerment Platform MVP
+# HerRaise - Mentorship & Empowerment Platform
 
-## Project Overview
-HerRaise is a web platform focused on empowering girls and young women in South Sudan (ages 10-28) through mentorship, inspirational stories, and community support. This repository contains the foundational MVP version.
+> Empowering South Sudanese girls and young women (ages 10-28) through digital mentorship, inspirational storytelling, and community support.
 
-**Note**: This is a baseline/proof-of-concept version focused on demonstrating professional development practices, CI/CD setup, containerization, and Infrastructure as Code rather than a complete application.
+## Overview
 
-## Target Users
-- **Primary**: South Sudanese girls aged 10-28 (students, young professionals, those seeking support)
-- **Secondary**: Admins/mentorship coordinators
+HerRaise is a web-based mentorship platform designed to address the unique challenges faced by girls and young women in South Sudan. This MVP demonstrates professional software development practices including CI/CD, containerization, and Infrastructure as Code.
 
-## Project Management
-- **Planning Board**:  GitHub Projects board created with detailed User Stories
-- **Issue Tracking**:  Issues created for all milestones and current sprint tasks
-- **Workflow**:  Active task tracking from "To Do" → "In Progress" → "Done"
-- **Milestones**: 
+**Live Demo**: [Coming Soon - Post Infrastructure Deployment]
 
-  -  Phase 1: Foundation & CI Setup
-  -  Phase 2: Containerization & Infrastructure as Code (Current)
-  -  Phase 3: Continuous Deployment
-  -  Phase 4: Monitoring & Security
+## Target Impact
+- **Primary Users**: South Sudanese girls aged 10-28 seeking mentorship and educational resources
+- **Secondary Users**: Mentors, coordinators, and community leaders
+- **Mission**: Bridge the opportunity gap through accessible digital empowerment tools
 
-  -  Phase 1: Foundation & CI Setup
-  -  Phase 2: Containerization & Infrastructure as Code
-  -  Phase 3: Continuous Deployment
-  -  Phase 4: Monitoring & Security
+## Technical Architecture
 
-
-## Repository Security
-- **Branch Protection**: Main branch requires PR + 1 reviewer + CI checks
-- **Workflow**: All changes via Pull Requests from develop/feature branches
-- **Code Reviews**: Mandatory reviewer approval before merge
-
-## Tech Stack
-- **Frontend**: HTML, CSS, JavaScript
-- **Backend**: Node.js + Express.js
-- **Database**: PostgreSQL
-- **Testing**: Jest + Supertest
-- **Containerization**: Docker & Docker Compose
-- **Infrastructure**: Terraform (Azure)
-- **CI/CD**: GitHub Actions (automated linting + testing on PRs)
-
-## Project Structure
 ```
-HerRaise_Planning_CI-Foundation/
-├── frontend/          # Client-side code
-├── backend/           # Server-side API
-├── database/          # Database scripts and migrations
-├── tests/             # Unit and integration tests
-├── terraform/         # Infrastructure as Code
-├── scripts/           # Deployment scripts
-├── .github/workflows/ # CI/CD pipeline
-├── docker-compose.yml # Local development environment
-├── Dockerfile         # Container configuration
-└── docs/              # Documentation
+Frontend (Static)  →  Node.js API  →  PostgreSQL Database
+     ↓                    ↓              ↓
+   Docker          →   Docker      →   Docker
+     ↓                    ↓              ↓
+ Azure App Service  → Container Registry → Azure Database
 ```
 
-## Getting Started
+### Tech Stack
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | HTML, CSS, JavaScript |
+| **Backend** | Node.js + Express.js |
+| **Database** | PostgreSQL |
+| **Testing** | Jest + Supertest |
+| **Containerization** | Docker + Docker Compose |
+| **Infrastructure** | Terraform (Azure) |
+| **CI/CD** | GitHub Actions |
 
-### Prerequisites
-- Node.js 18+
-- Docker & Docker Compose
-- Azure CLI (for cloud deployment)
-- Terraform (for infrastructure)
+## Quick Start
 
-### Local Development with Docker
+### Development Environment
 
-1. **Clone the repository**
 ```bash
+# Clone and start with Docker
 git clone <repository-url>
 cd HerRaise_Planning_CI-Foundation
-```
-
-2. **Start with Docker Compose**
-```bash
-# Start all services (app + database)
 docker-compose up -d
 
-# View logs
-docker-compose logs -f app
-
-# Stop services
-docker-compose down
+# Access application
+open http://localhost:3000
 ```
 
-3. **Access the application**
-- Application: http://localhost:3000
-- API: http://localhost:3000/api
-- Database: localhost:5432
-
-### Docker Commands for Production
+### Production Deployment
 
 ```bash
-# Build production image
-docker build -t herraise:latest .
+# 1. Provision Azure infrastructure
+cd terraform && terraform init && terraform apply
 
-# Run container locally
-docker run -p 3000:3000 herraise:latest
-
-# Build and run with docker-compose
-docker-compose up --build
+# 2. Build and deploy to Azure
+chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 ```
 
-### Traditional Development Setup
+## Project Management
 
-```bash
-# Install dependencies
-npm install
+- **Planning Board**: GitHub Projects with detailed user stories
+- **Issue Tracking**: Milestone-based task management
+- **Security**: Branch protection + mandatory PR reviews
+- **Quality Gates**: Automated CI checks (linting, testing, Docker builds)
 
-# Start PostgreSQL (if not using Docker)
-# Configure DATABASE_URL in .env
+### Development Milestones
+- [x] **Phase 1**: Foundation & CI Setup
+- [ ] **Phase 2**: Containerization & Infrastructure as Code
+- [ ] **Phase 3**: Continuous Deployment Pipeline
+- [ ] **Phase 4**: Monitoring & Security Hardening
 
-# Run tests
-npm test
+## Repository Structure
 
-# Start development server
-npm run dev
+```
+├── frontend/           # Client-side application
+├── backend/            # REST API server
+├── database/           # Schema & migrations
+├── terraform/          # Infrastructure as Code
+├── .github/workflows/  # CI/CD automation
+├── docker-compose.yml  # Local development
+└── Dockerfile         # Production container
 ```
 
-## Infrastructure Deployment
+## Contributing
 
-### Prerequisites
-- Azure Account with configured credentials
-- Terraform installed
+### Workflow
+1. Create feature branch from `develop`
+2. Implement with test coverage
+3. Submit Pull Request to `main`
+4. Pass CI checks + peer review
+5. Deploy via automated pipeline
 
-### Deploy Infrastructure
+### Code Quality Standards
+- ESLint + Prettier formatting
+- Jest unit tests (>80% coverage)
+- Docker build verification
+- Security vulnerability scanning
 
-1. **Initialize Terraform**
+## Environment Configuration
+
 ```bash
-cd terraform
-terraform init
+# Local development (.env)
+NODE_ENV=development
+PORT=3000
+DATABASE_URL=postgresql://herraise_user:herraise_password@localhost:5432/herraise_db
+
+# Production (Azure - managed via Terraform)
+NODE_ENV=production
+DATABASE_URL=${azurerm_postgresql_flexible_server.connection_string}
+AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 ```
 
-2. **Plan deployment**
-```bash
-terraform plan
-```
+## Infrastructure Components
 
-3. **Apply infrastructure**
-```bash
-terraform apply
-```
+| Resource | Purpose | Azure Service |
+|----------|---------|---------------|
+| **Virtual Network** | Secure networking | Azure Virtual Network with subnets |
+| **Container Registry** | Docker image storage | Azure Container Registry (ACR) |
+| **App Service** | Web application hosting | Azure App Service (Linux containers) |
+| **PostgreSQL** | Database service | Azure Database for PostgreSQL Flexible Server |
+| **Resource Group** | Resource management | Azure Resource Group |
 
-4. **Deploy application**
-```bash
-# Make script executable
-chmod +x scripts/deploy.sh
+## Performance & Monitoring
 
-# Run deployment
+- **Health Checks**: `/api/health` endpoint
+- **Logging**: Structured JSON logs
+- **Metrics**: Application performance monitoring (planned)
+- **Alerts**: Infrastructure monitoring (planned)
+
+## Security
+
+- Branch protection on `main` branch
+- Mandatory code reviews
+- Dependency vulnerability scanning
+- Environment variable encryption
+- HTTPS enforcement in production
+
+## Support & Documentation
+
+- **Issues**: Report bugs via GitHub Issues
+- **Discussions**: Community support via GitHub Discussions
+- **Documentation**: `/docs` directory for detailed guides
+
+---
+
+**Vision**: Building sustainable pathways for South Sudanese girls to overcome barriers and achieve their full potential through technology-enabled mentorship and community support.
+
+**License**: MIT | **Team**: HerRaise Development Team
 ./scripts/deploy.sh
 ```
 
-### Infrastructure Components
-- **Virtual Network**: Custom VNet with subnets
+### Azure Infrastructure Components
+- **Resource Group**: Organized resource management
+- **Virtual Network**: Custom VNet with secure subnets
 - **ACR**: Azure Container Registry for Docker images
-- **App Service**: Containerized web application hosting
-- **PostgreSQL**: Azure Database for PostgreSQL
-- **Networking**: Virtual network integration
+- **App Service**: Azure App Service with Linux container runtime
+- **PostgreSQL**: Azure Database for PostgreSQL Flexible Server
+- **Networking**: VNet integration for secure communication
 
 ## Development Workflow
 1. Create feature branch from develop
@@ -170,13 +172,18 @@ Create `.env` file for local development:
 ```
 NODE_ENV=development
 PORT=3000
-DATABASE_URL=postgresql:
-herraise_user:herraise_password@localhost:5432/herraise_db
+DATABASE_URL=postgresql://herraise_user:herraise_password@localhost:5432/herraise_db
+
+# Azure-specific variables (set via Terraform in production)
+AZURE_RESOURCE_GROUP=herraise-rg
+AZURE_CONTAINER_REGISTRY=herraiseacr.azurecr.io
 ```
 
 ## CI/CD Pipeline
+- **Platform**: GitHub Actions with Azure integration
 - **Triggers**: Automatic on Pull Requests to main
 - **Checks**: ESLint, Prettier, Jest unit tests, Docker build
+- **Deployment**: Automated Azure App Service deployment
 - **Quality Gates**: All checks must pass before merge allowed
 
 
