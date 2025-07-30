@@ -6,10 +6,13 @@
   "scripts": {
     "start": "node backend/server.js",
     "dev": "nodemon backend/server.js",
+    "build": "echo 'Build step - copying files' && mkdir -p dist && cp -r . dist/",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --watchAll=false",
     "lint": "eslint backend/ tests/",
-    "lint:fix": "eslint backend/ tests/ --fix"
+    "lint:fix": "eslint backend/ tests/ --fix",
+    "security:audit": "npm audit --audit-level=high"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
