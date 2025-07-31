@@ -84,13 +84,13 @@ jobs:
 
       - name: Attempt to fix vulnerabilities
         run: |
-          echo "🔧 Attempting to fix vulnerabilities..."
+          echo " Attempting to fix vulnerabilities..."
           npm audit fix --force 2>/dev/null || echo "Some vulnerabilities couldn't be auto-fixed"
-          echo "✅ Auto-fix attempt completed"
+          echo " Auto-fix attempt completed"
 
       - name: Run security audit (informational only)
         run: |
-          echo "🔍 Running comprehensive security audit..."
+          echo " Running comprehensive security audit..."
           
           # Check for critical vulnerabilities
           echo "Checking critical vulnerabilities:"
@@ -101,23 +101,23 @@ jobs:
           npm audit --audit-level=high --json > high_audit.json 2>/dev/null || true
           
           # Display results in a user-friendly format
-          echo "📊 Security Audit Summary:"
+          echo " Security Audit Summary:"
           
           if npm audit --audit-level=critical --quiet 2>/dev/null; then
-            echo "✅ No critical vulnerabilities found"
+            echo " No critical vulnerabilities found"
           else
-            echo "⚠️ Critical vulnerabilities detected - see details below"
+            echo " Critical vulnerabilities detected - see details below"
             npm audit --audit-level=critical 2>/dev/null || true
           fi
           
           if npm audit --audit-level=high --quiet 2>/dev/null; then
-            echo "✅ No high severity vulnerabilities found"
+            echo " No high severity vulnerabilities found"
           else
-            echo "⚠️ High severity vulnerabilities detected - see details below"
+            echo " High severity vulnerabilities detected - see details below"
             npm audit --audit-level=high 2>/dev/null || true
           fi
           
-          echo "✅ Security audit completed (non-blocking mode)"
+          echo " Security audit completed (non-blocking mode)"
 
       - name: Upload audit results
         uses: actions/upload-artifact@v4
@@ -139,12 +139,12 @@ jobs:
 
       - name: Security summary
         run: |
-          echo "📋 Security Scan Summary:"
+          echo " Security Scan Summary:"
           echo "- Dependency vulnerabilities checked and logged"
           echo "- Filesystem scan completed"
           echo "- Audit results uploaded as artifacts"
           echo "- Build continues (vulnerabilities logged for review)"
-          echo "✅ Security scanning phase completed successfully"
+          echo " Security scanning phase completed successfully"
 
   docker:
     name: Build and Push Container
@@ -186,6 +186,7 @@ jobs:
 
   deploy-staging:
     name: Deploy to Staging
+
     runs-on: ubuntu-latest
     needs: docker
     if: github.ref == 'refs/heads/develop' && vars.AZURE_DEPLOYMENT_ENABLED == 'true'
@@ -195,8 +196,8 @@ jobs:
         run: |
           echo "🔍 Checking Azure deployment prerequisites..."
           if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}" ]; then
-            echo "❌ Azure staging publish profile not configured"
-            echo "ℹ️  To enable deployment:"
+            echo " Azure staging publish profile not configured"
+            echo "  To enable deployment:"
             echo "   1. Deploy Azure infrastructure with Terraform"
             echo "   2. Download publish profile from Azure Portal"
             echo "   3. Add to GitHub Secrets as AZURE_WEBAPP_PUBLISH_PROFILE_STAGING"
@@ -213,8 +214,8 @@ jobs:
 
       - name: Verify staging deployment
         run: |
-          echo "🚀 Staging deployment completed"
-          echo "🌐 Staging URL: https://${{ env.AZURE_WEBAPP_NAME }}-staging.azurewebsites.net"
+          echo " Staging deployment completed"
+          echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME }}-staging.azurewebsites.net"
 
   deploy-production:
     name: Deploy to Production
@@ -227,15 +228,15 @@ jobs:
         run: |
           echo "🔍 Checking Azure deployment prerequisites..."
           if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}" ]; then
-            echo "❌ Azure production publish profile not configured"
-            echo "ℹ️  To enable deployment:"
+            echo " Azure production publish profile not configured"
+            echo "  To enable deployment:"
             echo "   1. Deploy Azure infrastructure with Terraform"
             echo "   2. Download publish profile from Azure Portal"
             echo "   3. Add to GitHub Secrets as AZURE_WEBAPP_PUBLISH_PROFILE"
             echo "   4. Set repository variable AZURE_DEPLOYMENT_ENABLED=true"
             exit 1
           fi
-          echo "✅ Prerequisites validated"
+          echo " Prerequisites validated"
 
       - name: Deploy to Azure Web App Production
         uses: azure/webapps-deploy@v2
@@ -246,10 +247,10 @@ jobs:
 
       - name: Verify production deployment
         run: |
-          echo "🚀 Production deployment completed"
-          echo "🌐 Production URL: https://herraisehub.azurewebsites.net"
-          echo "📅 Deployed at: $(date)"
-          echo "📋 Commit: ${{ github.sha }}"
+          echo " Production deployment completed"
+          echo " Production URL: https://herraisehub.azurewebsites.net"
+          echo " Deployed at: $(date)"
+          echo " Commit: ${{ github.sha }}"
 
   deployment-status:
     name: Deployment Status Summary
@@ -259,19 +260,58 @@ jobs:
     steps:
       - name: Pipeline summary
         run: |
-          echo "📊 HerRaise CI/CD Pipeline Summary"
+          echo " HerRaise CI/CD Pipeline Summary"
           echo "=================================="
-          echo "✅ Build: Completed successfully"
-          echo "✅ Tests: All tests passed"
-          echo "✅ Security: Scanned and logged"
-          echo "✅ Docker: Image built and ready"
+          echo " Build: Completed successfully"
+          echo " Tests: All tests passed"
+          echo " Security: Scanned and logged"
+          echo " Docker: Image built and ready"
           echo ""
           if [ "${{ vars.AZURE_DEPLOYMENT_ENABLED }}" == "true" ]; then
-            echo "🚀 Deployment: Enabled and configured"
+            echo " Deployment: Enabled and configured"
           else
-            echo "⏸️  Deployment: Disabled (Azure infrastructure pending)"
+            echo "  Deployment: Disabled (Azure infrastructure pending)"
             echo "   Next steps:"
             echo "   1. Deploy infrastructure: cd terraform && terraform apply"
             echo "   2. Configure publish profiles in GitHub Secrets"
             echo "   3. Set AZURE_DEPLOYMENT_ENABLED=true in repository variables"
           fi
+
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    steps:
+      - name: Deploy to Azure Web App Staging
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}-staging
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}
+          images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Verify staging deployment
+        run: |
+          echo " Staging deployment completed"
+          echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME }}-staging.azurewebsites.net"
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Deploy to Azure Web App Production
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Verify production deployment
+        run: |
+          echo " Production deployment completed"
+          echo " Production URL: https://herraisehub.azurewebsites.net"
+          echo " Deployed at: $(date)"
+          echo " Commit: ${{ github.sha }}"
+
