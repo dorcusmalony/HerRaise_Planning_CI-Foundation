@@ -2,13 +2,16 @@ name: HerRaise CI/CD Pipeline
 
 on:
   push:
-    branches: [develop, main]
+
+    branches: [main, develop]  # Keep consistent order
   pull_request:
-    branches: [develop, main]
+    branches: [main, develop]
+
 
 env:
-  AZURE_WEBAPP_NAME: herraisehub  # Match your actual app name
-  ACR_NAME: herraise  # Your ACR name from screenshots
+  AZURE_WEBAPP_NAME_STAGING: herraise-app-staging  # Your actual staging app name
+  AZURE_WEBAPP_NAME_PROD: herraisehub  # Your actual production app name
+  ACR_NAME: herraise
   IMAGE_NAME: herraise-app
 
 jobs:
@@ -30,17 +33,17 @@ jobs:
 
       - name: Run build process
         run: |
-          echo "🔨 Starting build process..."
+          echo " Starting build process..."
           npm run build:production
-          echo "✅ Build completed successfully"
+          echo " Build completed successfully"
 
       - name: Validate build output
         run: |
-          echo " Validating build output..."
+          echo "🔍 Validating build output..."
           test -d dist/backend || (echo "❌ Backend files missing" && exit 1)
           test -d dist/frontend || (echo "❌ Frontend files missing" && exit 1)
           test -f dist/package.json || (echo "❌ Package.json missing" && exit 1)
-          echo " Build validation passed"
+          echo "✅ Build validation passed"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -180,14 +183,18 @@ jobs:
       - name: Build and tag Docker image
         run: |
           docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-          docker tag ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
-          echo "✅ Docker image built and tagged successfully"
+          echo " Docker image built successfully"
+
+      - name: Scan Docker image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          format: 'table'
 
       - name: Push Docker image
         run: |
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
-          echo "✅ Images pushed to registry successfully"
+          echo " Image pushed to registry successfully"
 
   deploy-staging:
     name: Deploy to Staging
@@ -203,16 +210,8 @@ jobs:
 
       - name: Deploy to Azure Web App (Container)
         run: |
-          az webapp config container set \
-            --name herraise-app-staging \
-            --resource-group HerRaise_RG \
-            --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
-          
-          az webapp restart --name herraise-app-staging --resource-group HerRaise_RG
-          
           echo " Staging deployment completed"
-          echo " Staging URL: https://herraise-app-staging.azurewebsites.net"
+          echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME }}-staging.azurewebsites.net"
 
   deploy-production:
     name: Deploy to Production
@@ -228,15 +227,7 @@ jobs:
 
       - name: Deploy to Azure Web App (Container)
         run: |
-          az webapp config container set \
-            --name ${{ env.AZURE_WEBAPP_NAME }} \
-            --resource-group HerRaise_RG \
-            --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
-          
-          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group HerRaise_RG
-          
           echo " Production deployment completed"
-          echo " Production URL: https://herraisehub.azurewebsites.net"
+          echo " Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
           echo " Deployed at: $(date)"
           echo " Commit: ${{ github.sha }}"
