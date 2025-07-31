@@ -203,13 +203,20 @@ jobs:
           echo " Checking Azure deployment prerequisites..."
           if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}" ]; then
             echo " Azure staging publish profile not configured"
-            echo "  To enable deployment:"
-            echo "   1. Deploy Azure infrastructure with Terraform"
-            echo "   2. Download publish profile from Azure Portal"
-            echo "   3. Add to GitHub Secrets as AZURE_WEBAPP_PUBLISH_PROFILE_STAGING"
+            echo " To enable staging deployment:"
+            echo "   1. Create staging web app: ${{ env.AZURE_WEBAPP_NAME }}-staging"
+            echo "   2. Configure for Linux containers"
+            echo "   3. Download publish profile from Azure Portal"
+            echo "   4. Add to GitHub Secrets as AZURE_WEBAPP_PUBLISH_PROFILE_STAGING"
             exit 1
           fi
           echo " Prerequisites validated"
+
+      - name: Verify staging app configuration
+        run: |
+          echo " Verifying staging app exists and is configured correctly..."
+          echo "Expected staging app name: ${{ env.AZURE_WEBAPP_NAME }}-staging"
+          echo "Expected image: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}"
 
       - name: Deploy to Azure Web App Staging
         uses: azure/webapps-deploy@v2
@@ -222,6 +229,7 @@ jobs:
         run: |
           echo " Staging deployment completed"
           echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME }}-staging.azurewebsites.net"
+          echo " Deployed image: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}"
 
   deploy-production:
     name: Deploy to Production
@@ -235,7 +243,7 @@ jobs:
           echo " Checking Azure deployment prerequisites..."
           if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}" ]; then
             echo " Azure production publish profile not configured"
-            echo "  To enable deployment:"
+            echo " To enable deployment:"
             echo "   1. Deploy Azure infrastructure with Terraform"
             echo "   2. Download publish profile from Azure Portal"
             echo "   3. Add to GitHub Secrets as AZURE_WEBAPP_PUBLISH_PROFILE"
