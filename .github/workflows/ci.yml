@@ -7,6 +7,7 @@ on:
     branches: [develop, main]
 
 
+
     branches: [develop, main]
   pull_request:
     branches: [develop, main]
@@ -18,9 +19,21 @@ on:
 
 
 
+  pull_request:
+    branches: [develop, main]
+
+
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+
+
+
+
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
 
 
 env:
@@ -166,7 +179,12 @@ jobs:
             echo " High severity vulnerabilities detected:" >> security-reports/summary.txt
 
 
+
             echo " High severity vulnerabilities detected:" >> security-reports/summary.txt
+
+            echo "⚠️ High severity vulnerabilities detected:" >> security-reports/summary.txt
+
+
 
             echo "⚠️ High severity vulnerabilities detected:" >> security-reports/summary.txt
 
@@ -182,7 +200,12 @@ jobs:
           echo " Attempting automated vulnerability fixes..."
 
 
+
           echo " Attempting automated vulnerability fixes..."
+
+          echo "🔧 Attempting automated vulnerability fixes..."
+
+
 
           echo "🔧 Attempting automated vulnerability fixes..."
 
@@ -205,7 +228,12 @@ jobs:
           echo " Generating comprehensive security report..."
 
 
+
           echo " Generating comprehensive security report..."
+
+          echo "📋 Generating comprehensive security report..."
+
+
 
           echo "📋 Generating comprehensive security report..."
 
@@ -266,8 +294,14 @@ jobs:
             echo " To set up Azure authentication:"
 
 
+
             echo " AZURE_CREDENTIALS secret not configured"
             echo " To set up Azure authentication:"
+
+            echo " AZURE_CREDENTIALS secret not configured"
+            echo "To set up Azure authentication:"
+
+
 
             echo " AZURE_CREDENTIALS secret not configured"
             echo "To set up Azure authentication:"
@@ -303,6 +337,24 @@ jobs:
           echo "✅ Docker image built successfully"
 
 
+
+      - name: Container Image Security Scanning
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          format: 'sarif'
+          output: 'container-security-report.sarif'
+          exit-code: '0'
+
+      - name: Container Vulnerability Summary
+        run: |
+          echo "🔍 Container Security Scan Summary:"
+          trivy image --format table ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} || true
+          echo "✅ Container security scan completed"
+
+
+
+
       - name: Container Image Security Scanning
         uses: aquasecurity/trivy-action@master
         with:
@@ -319,6 +371,7 @@ jobs:
 
 
 
+
       - name: Container Image Security Scanning
         uses: aquasecurity/trivy-action@master
         with:
@@ -332,6 +385,7 @@ jobs:
           echo "🔍 Container Security Scan Summary:"
           trivy image --format table ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} || true
           echo "✅ Container security scan completed"
+
 
 
       - name: Push Docker image (conditional)
@@ -348,8 +402,13 @@ jobs:
             echo " To enable Azure deployment, configure AZURE_CREDENTIALS secret"
 
 
+
             echo " Docker image built locally (Azure push skipped - credentials not configured)"
             echo " To enable Azure deployment, configure AZURE_CREDENTIALS secret"
+
+            echo "🔧 Docker image built locally (Azure push skipped - credentials not configured)"
+            echo "📋 To enable Azure deployment, configure AZURE_CREDENTIALS secret"
+
 
             echo "🔧 Docker image built locally (Azure push skipped - credentials not configured)"
             echo "📋 To enable Azure deployment, configure AZURE_CREDENTIALS secret"
@@ -375,6 +434,11 @@ jobs:
 
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
+            echo " Cannot deploy - Azure credentials not configured"
+            echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
+
 
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
@@ -408,7 +472,12 @@ jobs:
           echo " Running post-deployment health checks..."
 
 
+
           echo " Running post-deployment health checks..."
+
+          echo "🏥 Running post-deployment health checks..."
+
+
 
           echo "🏥 Running post-deployment health checks..."
 
@@ -420,7 +489,9 @@ jobs:
             echo "✅ Staging deployment health check passed"
           else
 
+
             echo "Health check failed - manual verification required"
+
 
 
             echo "⚠ Health check failed - manual verification required"
@@ -445,8 +516,14 @@ jobs:
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
 
 
+
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
+            echo " Cannot deploy - Azure credentials not configured"
+            echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
+
 
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
@@ -475,11 +552,11 @@ jobs:
 
 
 
+
           echo " Production deployment completed"
           echo " Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
           echo " Deployed at: $(date)"
           echo " Commit: ${{ github.sha }}"
-
 
 
           echo "✅ Production deployment completed"
@@ -505,10 +582,12 @@ jobs:
             echo " Production health check failed"
 
 
+
             echo " Production deployment successful and healthy"
             echo " Live production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
           else
             echo " Production health check failed"
+
 
             echo " Production deployment successful and healthy"
             echo " Live production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
@@ -524,11 +603,14 @@ jobs:
           echo " Deployment Metrics:"
 
 
+
           echo " Deployment Metrics:"
 
           echo "📊 Deployment Metrics:"
 
-p
+  echo "📊 Deployment Metrics:"
+
+
           echo "- Commit: ${{ github.sha }}"
           echo "- Deployed at: $(date)"
           echo "- Pipeline: ${{ github.run_number }}"
