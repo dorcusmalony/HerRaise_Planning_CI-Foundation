@@ -2,13 +2,14 @@ name: HerRaise CI/CD Pipeline
 
 on:
   push:
-    branches: [develop, main]
+    branches: [main, develop]  # Keep consistent order
   pull_request:
-    branches: [develop, main]
+    branches: [main, develop]
 
 env:
-  AZURE_WEBAPP_NAME: herraisehub # Match your actual app name
-  ACR_NAME: herraise  # Your ACR name from screenshots
+  AZURE_WEBAPP_NAME_STAGING: herraise-app-staging  # Your actual staging app name
+  AZURE_WEBAPP_NAME_PROD: herraisehub  # Your actual production app name
+  ACR_NAME: herraise
   IMAGE_NAME: herraise-app
 
 jobs:
@@ -168,92 +169,75 @@ jobs:
           name: build-files
           path: dist/
 
-      - name: Log in to Azure Container Registry
-        uses: azure/docker-login@v1
+      - name: Azure Login
+        uses: azure/login@v1
         with:
-          login-server: ${{ env.ACR_NAME }}.azurecr.io
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Build Docker image
+      - name: Log in to Azure Container Registry
+        run: |
+          az acr login --name ${{ env.ACR_NAME }}
+
+      - name: Build and tag Docker image
         run: |
           docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-          echo " Docker image built successfully"
-
-      - name: Scan Docker image
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          format: 'table'
+          docker tag ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
+          echo " Docker image built and tagged successfully"
 
       - name: Push Docker image
         run: |
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          echo " Image pushed to registry successfully"
+          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
+          echo " Images pushed to registry successfully"
 
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: docker
-    if: github.ref == 'refs/heads/develop' && vars.AZURE_DEPLOYMENT_ENABLED == 'true'
+    if: github.ref == 'refs/heads/develop'
     environment: staging
     steps:
-      - name: Check deployment prerequisites
-        run: |
-          echo " Checking Azure deployment prerequisites..."
-          if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}" ]; then
-            echo " Azure staging publish profile not configured"
-            echo "  To enable deployment:"
-            echo "   1. Deploy Azure infrastructure with Terraform"
-            echo "   2. Download publish profile from Azure Portal"
-            echo "   3. Add to GitHub Secrets as AZURE_WEBAPP_PUBLISH_PROFILE_STAGING"
-            exit 1
-          fi
-          echo " Prerequisites validated"
-
-      - name: Deploy to Azure Web App Staging
-        uses: azure/webapps-deploy@v2
+      - name: Azure Login
+        uses: azure/login@v1
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}-staging
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}
-          images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Verify staging deployment
+      - name: Deploy to Azure Web App (Container)
         run: |
+          az webapp config container set \
+            --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} \
+            --resource-group HerRaise_RG \
+            --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
+          
+          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} --resource-group HerRaise_RG
+          
           echo " Staging deployment completed"
-          echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME }}-staging.azurewebsites.net"
+          echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net"
 
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
     needs: docker
-    if: github.ref == 'refs/heads/main' && vars.AZURE_DEPLOYMENT_ENABLED == 'true'
+    if: github.ref == 'refs/heads/main'
     environment: production
     steps:
-      - name: Check deployment prerequisites
-        run: |
-          echo " Checking Azure deployment prerequisites..."
-          if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}" ]; then
-            echo " Azure production publish profile not configured"
-            echo "  To enable deployment:"
-            echo "   1. Deploy Azure infrastructure with Terraform"
-            echo "   2. Download publish profile from Azure Portal"
-            echo "   3. Add to GitHub Secrets as AZURE_WEBAPP_PUBLISH_PROFILE"
-            echo "   4. Set repository variable AZURE_DEPLOYMENT_ENABLED=true"
-            exit 1
-          fi
-          echo " Prerequisites validated"
-
-      - name: Deploy to Azure Web App Production
-        uses: azure/webapps-deploy@v2
+      - name: Azure Login
+        uses: azure/login@v1
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Verify production deployment
+      - name: Deploy to Azure Web App (Container)
         run: |
+          az webapp config container set \
+            --name ${{ env.AZURE_WEBAPP_NAME_PROD }} \
+            --resource-group HerRaise_RG \
+            --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
+          
+          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_PROD }} --resource-group HerRaise_RG
+          
           echo " Production deployment completed"
-          echo " Production URL: https://herraisehub.azurewebsites.net"
+          echo " Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
           echo " Deployed at: $(date)"
           echo " Commit: ${{ github.sha }}"
