@@ -54,7 +54,7 @@ I have reviewed Abuk's work as my peer:
 - *Container Registry Authentication*: Setting up proper authentication between Azure Container Registry and App Service
 - *Environment Variable Configuration*: Ensuring all necessary environment variables were properly configured in the Azure App Service
 - *Resource Provisioning Order*: Understanding the dependencies between resources and the correct sequence for manual deployment
-- *Documentation Overload*: Azure documentation is extensive but often too advanced for beginners, requiring significant time to filter through relevant information
+- *Documentation Overload*: Azure documentation is too extensive but often too advanced for beginners, requiring significant time to filter through relevant information
 
 
 
