@@ -7,7 +7,7 @@ on:
     branches: [develop, main]
 
 env:
-  AZURE_WEBAPP_NAME: herraisehub  # Match your actual app name
+  AZURE_WEBAPP_NAME: herraisehub # Match your actual app name
   ACR_NAME: herraise  # Your ACR name from screenshots
   IMAGE_NAME: herraise-app
 
