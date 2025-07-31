@@ -7,10 +7,6 @@ on:
   pull_request:
     branches: [develop, main]
 
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
-
 
 env:
   AZURE_WEBAPP_NAME_STAGING: herraise-app-staging
