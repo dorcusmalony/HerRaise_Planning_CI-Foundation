@@ -193,9 +193,6 @@ jobs:
 
   deploy-staging:
     name: Deploy to Staging
-
-
-
     runs-on: ubuntu-latest
     needs: docker
     if: github.ref == 'refs/heads/develop' && vars.AZURE_DEPLOYMENT_ENABLED == 'true'
@@ -260,34 +257,3 @@ jobs:
           echo " Production URL: https://herraisehub.azurewebsites.net"
           echo " Deployed at: $(date)"
           echo " Commit: ${{ github.sha }}"
-
-  deployment-status:
-    name: Deployment Status Summary
-    runs-on: ubuntu-latest
-    needs: [build, test, security, docker]
-    if: always()
-    steps:
-      - name: Pipeline summary
-        run: |
-          echo " HerRaise CI/CD Pipeline Summary"
-          echo "=================================="
-          echo " Build: Completed successfully"
-          echo " Tests: All tests passed"
-          echo " Security: Scanned and logged"
-          echo " Docker: Image built and ready"
-          echo ""
-          if [ "${{ vars.AZURE_DEPLOYMENT_ENABLED }}" == "true" ]; then
-            echo " Deployment: Enabled and configured"
-          else
-            echo "  Deployment: Disabled (Azure infrastructure pending)"
-            echo "   Next steps:"
-            echo "   1. Deploy infrastructure: cd terraform && terraform apply"
-            echo "   2. Configure publish profiles in GitHub Secrets"
-            echo "   3. Set AZURE_DEPLOYMENT_ENABLED=true in repository variables"
-          fi
-
-
-
-
-
-
