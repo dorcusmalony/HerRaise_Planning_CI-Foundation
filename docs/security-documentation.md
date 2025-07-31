@@ -110,5 +110,4 @@ Application Events → App Insights → Log Analytics → Alerts → Response
                    Automated Actions
                    Team Notifications
                    Incident Management
-```
 
