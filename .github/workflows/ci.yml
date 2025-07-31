@@ -5,17 +5,35 @@ on:
 
 
     branches: [develop, main]
+
+
+
+    branches: [develop, main]
   pull_request:
     branches: [develop, main]
 
     branches: [main, develop]
+
   pull_request:
-    branches: [main, develop]
+    branches: [develop, main]
+
+
+
+  pull_request:
+    branches: [develop, main]
 
 
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+
+
+
+
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
 
 
 env:
@@ -49,11 +67,11 @@ jobs:
 
       - name: Validate build output
         run: |
-          echo "🔍 Validating build output..."
-          test -d dist/backend || (echo "❌ Backend files missing" && exit 1)
-          test -d dist/frontend || (echo "❌ Frontend files missing" && exit 1)
-          test -f dist/package.json || (echo "❌ Package.json missing" && exit 1)
-          echo "✅ Build validation passed"
+          echo " Validating build output..."
+          test -d dist/backend || (echo " Backend files missing" && exit 1)
+          test -d dist/frontend || (echo " Frontend files missing" && exit 1)
+          test -f dist/package.json || (echo " Package.json missing" && exit 1)
+          echo " Build validation passed"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -160,7 +178,16 @@ jobs:
 
             echo " High severity vulnerabilities detected:" >> security-reports/summary.txt
 
+
+
+            echo " High severity vulnerabilities detected:" >> security-reports/summary.txt
+
             echo "⚠️ High severity vulnerabilities detected:" >> security-reports/summary.txt
+
+
+
+            echo "⚠️ High severity vulnerabilities detected:" >> security-reports/summary.txt
+
 
             npm audit --audit-level=high 2>/dev/null | head -20 >> security-reports/summary.txt || true
           fi
@@ -172,7 +199,16 @@ jobs:
 
           echo " Attempting automated vulnerability fixes..."
 
+
+
+          echo " Attempting automated vulnerability fixes..."
+
           echo "🔧 Attempting automated vulnerability fixes..."
+
+
+
+          echo "🔧 Attempting automated vulnerability fixes..."
+
 
           npm audit fix --force 2>/dev/null || echo "Some vulnerabilities require manual intervention"
           echo "✅ Auto-remediation attempt completed"
@@ -191,7 +227,16 @@ jobs:
 
           echo " Generating comprehensive security report..."
 
+
+
+          echo " Generating comprehensive security report..."
+
           echo "📋 Generating comprehensive security report..."
+
+
+
+          echo "📋 Generating comprehensive security report..."
+
 
           cat > security-reports/security-dashboard.md << EOF
           # HerRaise Security Scan Report
@@ -248,8 +293,19 @@ jobs:
             echo " AZURE_CREDENTIALS secret not configured"
             echo " To set up Azure authentication:"
 
+
+
+            echo " AZURE_CREDENTIALS secret not configured"
+            echo " To set up Azure authentication:"
+
             echo " AZURE_CREDENTIALS secret not configured"
             echo "To set up Azure authentication:"
+
+
+
+            echo " AZURE_CREDENTIALS secret not configured"
+            echo "To set up Azure authentication:"
+
 
             echo "   1. Create Azure Service Principal:"
             echo "      az ad sp create-for-rbac --name 'GitHub-Actions-HerRaise' --role contributor --scopes /subscriptions/{subscription-id} --sdk-auth"
@@ -281,6 +337,24 @@ jobs:
           echo "✅ Docker image built successfully"
 
 
+
+      - name: Container Image Security Scanning
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          format: 'sarif'
+          output: 'container-security-report.sarif'
+          exit-code: '0'
+
+      - name: Container Vulnerability Summary
+        run: |
+          echo "🔍 Container Security Scan Summary:"
+          trivy image --format table ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} || true
+          echo "✅ Container security scan completed"
+
+
+
+
       - name: Container Image Security Scanning
         uses: aquasecurity/trivy-action@master
         with:
@@ -297,6 +371,7 @@ jobs:
 
 
 
+
       - name: Container Image Security Scanning
         uses: aquasecurity/trivy-action@master
         with:
@@ -310,6 +385,7 @@ jobs:
           echo "🔍 Container Security Scan Summary:"
           trivy image --format table ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} || true
           echo "✅ Container security scan completed"
+
 
 
       - name: Push Docker image (conditional)
@@ -325,9 +401,18 @@ jobs:
             echo " Docker image built locally (Azure push skipped - credentials not configured)"
             echo " To enable Azure deployment, configure AZURE_CREDENTIALS secret"
 
+
+
+            echo " Docker image built locally (Azure push skipped - credentials not configured)"
+            echo " To enable Azure deployment, configure AZURE_CREDENTIALS secret"
+
             echo "🔧 Docker image built locally (Azure push skipped - credentials not configured)"
             echo "📋 To enable Azure deployment, configure AZURE_CREDENTIALS secret"
-n
+
+
+            echo "🔧 Docker image built locally (Azure push skipped - credentials not configured)"
+            echo "📋 To enable Azure deployment, configure AZURE_CREDENTIALS secret"
+
           else
             echo "✅ Docker image built and pushed to Azure Container Registry"
           fi
@@ -346,8 +431,18 @@ n
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
 
+
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
+            echo " Cannot deploy - Azure credentials not configured"
+            echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
+
+
+            echo " Cannot deploy - Azure credentials not configured"
+            echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
 
             exit 1
           fi
@@ -376,7 +471,16 @@ n
 
           echo " Running post-deployment health checks..."
 
+
+
+          echo " Running post-deployment health checks..."
+
           echo "🏥 Running post-deployment health checks..."
+
+
+
+          echo "🏥 Running post-deployment health checks..."
+
 
           sleep 30  # Allow app to start
           
@@ -385,9 +489,15 @@ n
             echo "✅ Staging deployment health check passed"
           else
 
+
+            echo "Health check failed - manual verification required"
+
+
+
             echo "⚠ Health check failed - manual verification required"
 
             echo "⚠️ Health check failed - manual verification required"
+
 
           fi
 
@@ -405,8 +515,19 @@ n
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
 
+
+
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
+            echo " Cannot deploy - Azure credentials not configured"
+            echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
+
+
+            echo " Cannot deploy - Azure credentials not configured"
+            echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
 
             exit 1
           fi
@@ -428,15 +549,21 @@ n
           az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_PROD }} --resource-group HerRaise_RG
           
 
+
+
+
+
           echo " Production deployment completed"
           echo " Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
           echo " Deployed at: $(date)"
           echo " Commit: ${{ github.sha }}"
 
+
           echo "✅ Production deployment completed"
           echo "🌐 Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
           echo "📅 Deployed at: $(date)"
           echo "🔖 Commit: ${{ github.sha }}"
+
 
 
       - name: Production Deployment Validation
@@ -454,10 +581,19 @@ n
           else
             echo " Production health check failed"
 
+
+
+            echo " Production deployment successful and healthy"
+            echo " Live production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
+          else
+            echo " Production health check failed"
+
+
             echo " Production deployment successful and healthy"
             echo " Live production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
           else
             echo "Production health check failed"
+
 
             exit 1
           fi
@@ -466,7 +602,14 @@ n
 
           echo " Deployment Metrics:"
 
+
+
+          echo " Deployment Metrics:"
+
           echo "📊 Deployment Metrics:"
+
+  echo "📊 Deployment Metrics:"
+
 
           echo "- Commit: ${{ github.sha }}"
           echo "- Deployed at: $(date)"
