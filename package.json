@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node backend/server.js",
     "dev": "nodemon backend/server.js",
-    "build": "echo 'Build step - copying files' && mkdir -p dist && cp -r . dist/",
+    "build": "chmod +x scripts/build.sh && ./scripts/build.sh",
+    "build:local": "npm run build",
+    "build:production": "npm run build",
+    "prebuild": "echo 'Preparing build environment...'",
+    "postbuild": "echo 'Build process completed'",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --watchAll=false",
@@ -37,5 +41,5 @@
       "backend/**/*.js",
       "!backend/server.js"
     ]
-  }
+}
 }

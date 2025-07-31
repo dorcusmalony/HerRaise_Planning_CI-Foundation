@@ -9,21 +9,23 @@ HerRaise is a web-based mentorship platform designed to address the unique chall
 **Live Demo**: [Coming Soon - Post Infrastructure Deployment]
 
 ## Target Impact
+
 - **Primary Users**: South Sudanese girls aged 10-28 seeking mentorship and educational resources
-- **Secondary Users**: Mentors, coordinators, and community leaders
+- **Secondary Users**: Mentors, coordinators, and community leaders  
 - **Mission**: Bridge the opportunity gap through accessible digital empowerment tools
 
 ## Technical Architecture
 
 ```
-Frontend (Static)  →  Node.js API  →  PostgreSQL Database
-     ↓                    ↓              ↓
-   Docker          →   Docker      →   Docker
-     ↓                    ↓              ↓
- Azure App Service  → Container Registry → Azure Database
+Frontend (Static) → Node.js API → PostgreSQL Database
+       ↓                ↓                ↓
+     Docker           Docker           Docker
+       ↓                ↓                ↓
+Azure App Service → Container Registry → Azure Database
 ```
 
 ### Tech Stack
+
 | Layer | Technology |
 |-------|------------|
 | **Frontend** | HTML, CSS, JavaScript |
@@ -58,41 +60,29 @@ cd terraform && terraform init && terraform apply
 chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 ```
 
-## Project Management
+## Development Milestones
 
-- **Planning Board**: GitHub Projects with detailed user stories
-- **Issue Tracking**: Milestone-based task management
-- **Security**: Branch protection + mandatory PR reviews
-- **Quality Gates**: Automated CI checks (linting, testing, Docker builds)
-
-### Development Milestones
- 
 - [x] **Phase 1**: Foundation & CI Setup
 - [ ] **Phase 2**: Containerization & Infrastructure as Code
 - [ ] **Phase 3**: Continuous Deployment Pipeline
 - [ ] **Phase 4**: Monitoring & Security Hardening
 
--  **Phase 1**: Foundation & CI Setup
--  **Phase 2**: Containerization & Infrastructure as Code
--  **Phase 3**: Continuous Deployment Pipeline
--  **Phase 4**: Monitoring & Security Hardening
-
-
 ## Repository Structure
 
 ```
-├── frontend/           # Client-side application
-├── backend/            # REST API server
-├── database/           # Schema & migrations
-├── terraform/          # Infrastructure as Code
-├── .github/workflows/  # CI/CD automation
-├── docker-compose.yml  # Local development
-└── Dockerfile         # Production container
+├── frontend/              # Client-side application
+├── backend/               # REST API server
+├── database/              # Schema & migrations
+├── terraform/             # Infrastructure as Code
+├── .github/workflows/     # CI/CD automation
+├── docker-compose.yml     # Local development
+└── Dockerfile            # Production container
 ```
 
 ## Contributing
 
 ### Workflow
+
 1. Create feature branch from `develop`
 2. Implement with test coverage
 3. Submit Pull Request to `main`
@@ -100,6 +90,7 @@ chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 5. Deploy via automated pipeline
 
 ### Code Quality Standards
+
 - ESLint + Prettier formatting
 - Jest unit tests (>80% coverage)
 - Docker build verification
@@ -129,19 +120,11 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 | **PostgreSQL** | Database service | Azure Database for PostgreSQL Flexible Server |
 | **Resource Group** | Resource management | Azure Resource Group |
 
-## Performance & Monitoring
-
-- **Health Checks**: `/api/health` endpoint
-- **Logging**: Structured JSON logs
-- **Metrics**: Application performance monitoring (planned)
-- **Alerts**: Infrastructure monitoring (planned)
-
-## Security
+## Security Features
 
 - Branch protection on `main` branch
 - Mandatory code reviews
-- Comprehensive dependency vulnerability scanning (non-blocking)
-- Security audit results captured as CI artifacts
+- Comprehensive dependency vulnerability scanning
 - Container image vulnerability scanning with Trivy
 - Environment variable encryption
 - HTTPS enforcement in production
@@ -153,11 +136,13 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 - **Discussions**: Community support via GitHub Discussions
 - **Documentation**: `/docs` directory for detailed guides
 
-
 ---
 
 **Vision**: Building sustainable pathways for South Sudanese girls to overcome barriers and achieve their full potential through technology-enabled mentorship and community support.
 
+<<<<<<< HEAD
+**License**: MIT | **Team**: HerRaise Development Team
+=======
 
 **License**: MIT | **Team**: HerRaise Development Team
 ./scripts/deploy.sh
@@ -348,3 +333,4 @@ Building a platform that will provide long-term impact by supporting South Sudan
 
 T e s t   d e p l o y m e n t   r u n   0 7 / 3 1 / 2 0 2 5   1 1 : 1 1 : 1 9  
  
+>>>>>>> decd876f304f2d0840fde8f09505067fd5203380

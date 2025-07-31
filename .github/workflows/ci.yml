@@ -7,9 +7,9 @@ on:
     branches: [automated-deployment, main]
 
 env:
-  AZURE_WEBAPP_NAME: herraise-app
-  ACR_NAME: herraise
-  IMAGE_NAME: herraise-hub
+  AZURE_WEBAPP_NAME: herraisehub  # Match your actual app name
+  ACR_NAME: herraise  # Your ACR name from screenshots
+  IMAGE_NAME: herraise-app
 
 jobs:
   build:
@@ -28,19 +28,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Create build directory
+      - name: Run build process
         run: |
-          mkdir -p dist
-          cp -r backend dist/
-          cp -r frontend dist/
-          cp package*.json dist/
-          echo " Build completed successfully"
+          echo "🔨 Starting build process..."
+          npm run build:production
+          echo "✅ Build completed successfully"
+
+      - name: Validate build output
+        run: |
+          echo "🔍 Validating build output..."
+          test -d dist/backend || (echo "❌ Backend files missing" && exit 1)
+          test -d dist/frontend || (echo "❌ Frontend files missing" && exit 1)
+          test -f dist/package.json || (echo "❌ Package.json missing" && exit 1)
+          echo "✅ Build validation passed"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-files
           path: dist/
+          retention-days: 7
 
   test:
     name: Run Tests
@@ -186,7 +193,6 @@ jobs:
 
   deploy-staging:
     name: Deploy to Staging
-
     runs-on: ubuntu-latest
     needs: docker
     if: github.ref == 'refs/heads/develop' && vars.AZURE_DEPLOYMENT_ENABLED == 'true'
@@ -194,7 +200,7 @@ jobs:
     steps:
       - name: Check deployment prerequisites
         run: |
-          echo "🔍 Checking Azure deployment prerequisites..."
+          echo " Checking Azure deployment prerequisites..."
           if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}" ]; then
             echo " Azure staging publish profile not configured"
             echo "  To enable deployment:"
@@ -203,7 +209,7 @@ jobs:
             echo "   3. Add to GitHub Secrets as AZURE_WEBAPP_PUBLISH_PROFILE_STAGING"
             exit 1
           fi
-          echo "✅ Prerequisites validated"
+          echo " Prerequisites validated"
 
       - name: Deploy to Azure Web App Staging
         uses: azure/webapps-deploy@v2
@@ -226,7 +232,7 @@ jobs:
     steps:
       - name: Check deployment prerequisites
         run: |
-          echo "🔍 Checking Azure deployment prerequisites..."
+          echo " Checking Azure deployment prerequisites..."
           if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}" ]; then
             echo " Azure production publish profile not configured"
             echo "  To enable deployment:"
@@ -251,67 +257,3 @@ jobs:
           echo " Production URL: https://herraisehub.azurewebsites.net"
           echo " Deployed at: $(date)"
           echo " Commit: ${{ github.sha }}"
-
-  deployment-status:
-    name: Deployment Status Summary
-    runs-on: ubuntu-latest
-    needs: [build, test, security, docker]
-    if: always()
-    steps:
-      - name: Pipeline summary
-        run: |
-          echo " HerRaise CI/CD Pipeline Summary"
-          echo "=================================="
-          echo " Build: Completed successfully"
-          echo " Tests: All tests passed"
-          echo " Security: Scanned and logged"
-          echo " Docker: Image built and ready"
-          echo ""
-          if [ "${{ vars.AZURE_DEPLOYMENT_ENABLED }}" == "true" ]; then
-            echo " Deployment: Enabled and configured"
-          else
-            echo "  Deployment: Disabled (Azure infrastructure pending)"
-            echo "   Next steps:"
-            echo "   1. Deploy infrastructure: cd terraform && terraform apply"
-            echo "   2. Configure publish profiles in GitHub Secrets"
-            echo "   3. Set AZURE_DEPLOYMENT_ENABLED=true in repository variables"
-          fi
-
-    runs-on: ubuntu-latest
-    needs: docker
-    if: github.ref == 'refs/heads/develop'
-    environment: staging
-    steps:
-      - name: Deploy to Azure Web App Staging
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}-staging
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}
-          images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-
-      - name: Verify staging deployment
-        run: |
-          echo " Staging deployment completed"
-          echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME }}-staging.azurewebsites.net"
-
-  deploy-production:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    needs: docker
-    if: github.ref == 'refs/heads/main'
-    environment: production
-    steps:
-      - name: Deploy to Azure Web App Production
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-
-      - name: Verify production deployment
-        run: |
-          echo " Production deployment completed"
-          echo " Production URL: https://herraisehub.azurewebsites.net"
-          echo " Deployed at: $(date)"
-          echo " Commit: ${{ github.sha }}"
-
