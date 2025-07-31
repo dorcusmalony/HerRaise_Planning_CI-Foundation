@@ -2,9 +2,9 @@ name: HerRaise CI/CD Pipeline
 
 on:
   push:
-    branches: [automated-deployment, main]
+    branches: [develop, main]
   pull_request:
-    branches: [automated-deployment, main]
+    branches: [develop, main]
 
 env:
   AZURE_WEBAPP_NAME: herraisehub  # Match your actual app name
