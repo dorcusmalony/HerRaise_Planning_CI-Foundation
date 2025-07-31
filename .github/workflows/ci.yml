@@ -2,9 +2,15 @@ name: HerRaise CI/CD Pipeline
 
 on:
   push:
+
     branches: [main, develop]  # Keep consistent order
   pull_request:
     branches: [main, develop]
+
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
 
 env:
   AZURE_WEBAPP_NAME_STAGING: herraise-app-staging  # Your actual staging app name
