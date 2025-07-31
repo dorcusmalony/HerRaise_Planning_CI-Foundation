@@ -140,9 +140,9 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 
 **Vision**: Building sustainable pathways for South Sudanese girls to overcome barriers and achieve their full potential through technology-enabled mentorship and community support.
 
-<<<<<<< HEAD
+
 **License**: MIT | **Team**: HerRaise Development Team
-=======
+
 
 **License**: MIT | **Team**: HerRaise Development Team
 ./scripts/deploy.sh
@@ -329,5 +329,11 @@ Building a platform that will provide long-term impact by supporting South Sudan
 
 
 
+
+
+
+#   C D   P i p e l i n e   T e s t 
+ 
+ 
 
 
