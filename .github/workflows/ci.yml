@@ -30,17 +30,17 @@ jobs:
 
       - name: Run build process
         run: |
-          echo "🔨 Starting build process..."
+          echo " Starting build process..."
           npm run build:production
-          echo "✅ Build completed successfully"
+          echo " Build completed successfully"
 
       - name: Validate build output
         run: |
-          echo "🔍 Validating build output..."
-          test -d dist/backend || (echo "❌ Backend files missing" && exit 1)
-          test -d dist/frontend || (echo "❌ Frontend files missing" && exit 1)
-          test -f dist/package.json || (echo "❌ Package.json missing" && exit 1)
-          echo "✅ Build validation passed"
+          echo " Validating build output..."
+          test -d dist/backend || (echo " Backend files missing" && exit 1)
+          test -d dist/frontend || (echo " Frontend files missing" && exit 1)
+          test -f dist/package.json || (echo " Package.json missing" && exit 1)
+          echo " Build validation passed"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
