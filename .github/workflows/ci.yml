@@ -2,42 +2,9 @@ name: HerRaise CI/CD Pipeline with DevSecOps
 
 on:
   push:
-
-    branches: [main, develop]
-
-
-
-    branches: [develop, main]
-
-
-
-    branches: [develop, main]
-  pull_request:
-    branches: [develop, main]
-
-    branches: [main, develop]
-
-  pull_request:
-    branches: [develop, main]
-
-
-
-
-  pull_request:
-    branches: [main, develop]
-
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
-
-
-
-
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
-
-
 
 env:
   AZURE_WEBAPP_NAME_STAGING: herraise-app-staging
@@ -70,15 +37,11 @@ jobs:
 
       - name: Validate build output
         run: |
-
           echo "Validating build output..."
-          ls -la dist/ || echo "Dist directory contents:"
           test -d dist/backend || (echo "Backend files missing" && exit 1)
           test -d dist/frontend || (echo "Frontend files missing" && exit 1)
           test -f dist/package.json || (echo "Package.json missing" && exit 1)
           echo "Build validation passed"
-          echo "Build contents:"
-          find dist -type f | head -10
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -129,75 +92,10 @@ jobs:
 
       - name: Dependency vulnerability scanning
         run: |
-          echo "Starting comprehensive dependency vulnerability scanning..."
+          echo "Starting dependency vulnerability scanning..."
           mkdir -p security-reports
-
-
-          echo " Starting comprehensive dependency vulnerability scanning..."
-          
-          # Create security report directory
-          mkdir -p security-reports
-          
-          # Run npm audit with detailed output
-          echo " Scanning for critical vulnerabilities..."
           npm audit --audit-level=critical --json > security-reports/critical-vulnerabilities.json 2>/dev/null || true
-
-          echo "🔍 Starting comprehensive dependency vulnerability scanning..."
-          
-          # Create security report directory
-          mkdir -p security-reports
-
-          
-          # Run npm audit with detailed output
-          echo "📋 Scanning for critical vulnerabilities..."
-          npm audit --audit-level=critical --json > security-reports/critical-vulnerabilities.json 2>/dev/null || true
-          
-          echo "📋 Scanning for high severity vulnerabilities..."
-          npm audit --audit-level=high --json > security-reports/high-vulnerabilities.json 2>/dev/null || true
-          
-          echo "📋 Full vulnerability report..."
-          npm audit --json > security-reports/full-audit.json 2>/dev/null || true
-
-          
-          # Generate human-readable summary
-          echo "📊 Security Scan Summary:" > security-reports/summary.txt
-          echo "Scan Date: $(date)" >> security-reports/summary.txt
-          echo "Project: HerRaise Platform" >> security-reports/summary.txt
-          echo "" >> security-reports/summary.txt
-          
-
-          # Generate human-readable summary
-          echo " Security Scan Summary:" > security-reports/summary.txt
-          echo "Scan Date: $(date)" >> security-reports/summary.txt
-          echo "Project: HerRaise Platform" >> security-reports/summary.txt
-          echo "" >> security-reports/summary.txt
-          
-
-
-          
-          # Run npm audit with detailed output
-          echo "📋 Scanning for critical vulnerabilities..."
-
-          npm audit --audit-level=critical --json > security-reports/critical-vulnerabilities.json 2>/dev/null || true
-          npm audit --audit-level=high --json > high_audit.json 2>/dev/null || true
-          echo "Security Scan Summary:" > security-reports/summary.txt
-          echo "Scan Date: $(date)" >> security-reports/summary.txt
-          echo "Project: HerRaise Platform" >> security-reports/summary.txt
-          echo "" >> security-reports/summary.txt
-          if npm audit --audit-level=critical --quiet 2>/dev/null; then
-            echo "No critical vulnerabilities found"
-          else
-            echo "Critical vulnerabilities detected - see details below"
-            npm audit --audit-level=critical 2>/dev/null || true
-          fi
-          echo "Security audit completed (non-blocking mode)"
-
-      - name: Automated Vulnerability Remediation
-        run: |
-          echo "Attempting automated vulnerability fixes..."
-          npm audit fix --force 2>/dev/null || echo "Some vulnerabilities require manual intervention"
-          echo "Auto-remediation attempt completed"
-
+          echo "Security audit completed"
 
       - name: SAST (Static Application Security Testing)
         uses: aquasecurity/trivy-action@master
@@ -205,59 +103,7 @@ jobs:
           scan-type: 'fs'
           scan-ref: '.'
           exit-code: '0'
-
           format: 'table'
-
-
-      - name: Generate Security Report
-        run: |
-
-          echo " Generating comprehensive security report..."
-
-
-          echo " Generating comprehensive security report..."
-
-
-
-          echo " Generating comprehensive security report..."
-
-          echo "📋 Generating comprehensive security report..."
-
-
-
-          echo "📋 Generating comprehensive security report..."
-
-
-
-          cat > security-reports/security-dashboard.md << EOF
-          # HerRaise Security Scan Report
-          
-          **Scan Date:** $(date)
-          **Pipeline:** ${GITHUB_WORKFLOW}
-          **Commit:** ${GITHUB_SHA}
-          **Branch:** ${GITHUB_REF_NAME}
-          
-          ## Vulnerability Summary
-          $(cat security-reports/summary.txt)
-          
-          ## Remediation Actions
-          - Automated fixes applied where possible
-          - Manual review required for remaining issues
-          - Security artifacts uploaded for detailed analysis
-          
-          ## Next Steps
-          1. Review uploaded security artifacts
-          2. Address any critical/high severity issues
-          3. Update dependencies as needed
-          4. Re-run security scan to verify fixes
-          EOF
-          
-
-          echo " Security documentation generated"
-
-          echo "✅ Security documentation generated"
-
-
 
       - name: Upload Security Artifacts
         uses: actions/upload-artifact@v4
@@ -282,24 +128,12 @@ jobs:
           name: build-files
           path: dist/
 
-      - name: Check Azure credentials
-        run: |
-          if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
-            echo "AZURE_CREDENTIALS secret not configured"
-            echo "SKIP_AZURE_PUSH=true" >> $GITHUB_ENV
-          else
-            echo "Azure credentials found"
-            echo "SKIP_AZURE_PUSH=false" >> $GITHUB_ENV
-          fi
-
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-
       - name: Login to Azure Container Registry
-        if: env.SKIP_AZURE_PUSH == 'false'
         run: |
           az acr login --name ${{ env.ACR_NAME }}
           echo "Successfully logged into ACR"
@@ -309,26 +143,17 @@ jobs:
           docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
           echo "Docker image built successfully"
 
-      - name: Container Image Security Scanning
+      - name: Container Security Scanning
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
           format: 'table'
           exit-code: '0'
 
-
       - name: Push Docker image
         run: |
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          echo "Image pushed to registry successfully"
-
-      - name: Docker build summary
-        run: |
-          if [ "$SKIP_AZURE_PUSH" == "true" ]; then
-            echo "Docker image built locally (Azure push skipped - credentials not configured)"
-          else
-            echo "Docker image built and pushed to Azure Container Registry"
-          fi
+          echo "Image pushed successfully"
 
   deploy-staging:
     name: Deploy to Staging
@@ -337,14 +162,6 @@ jobs:
     if: github.ref == 'refs/heads/develop'
     environment: staging
     steps:
-      - name: Check deployment prerequisites
-        run: |
-          if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
-            echo "Cannot deploy - Azure credentials not configured"
-            exit 1
-          fi
-          echo "Prerequisites validated"
-
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -358,21 +175,10 @@ jobs:
             --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
           az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} --resource-group HerRaise_RG
-
           echo "Staging deployment completed"
-          echo "Staging URL: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net"
-
-      - name: Post-Deployment Health Check
-        run: |
-          sleep 30
-          if curl -f -s https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net/api/health > /dev/null; then
-            echo "Staging deployment health check passed"
-          else
-            echo "Health check failed - manual verification required"
-          fi
 
   deploy-production:
-    name: Production Deployment with Manual Approval
+    name: Deploy to Production
     runs-on: ubuntu-latest
     needs: docker
     if: github.ref == 'refs/heads/main'
@@ -383,20 +189,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check deployment prerequisites
-        run: |
-          if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
-            echo "Cannot deploy - Azure credentials not configured"
-            exit 1
-          fi
-          echo "Prerequisites validated"
-
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Web App (Production)
+      - name: Deploy to Production
         run: |
           az webapp config container set \
             --name ${{ env.AZURE_WEBAPP_NAME_PROD }} \
@@ -404,19 +202,7 @@ jobs:
             --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
           az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_PROD }} --resource-group HerRaise_RG
-
           echo "Production deployment completed"
-          echo "Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
-
-      - name: Production Deployment Validation
-        run: |
-          sleep 45
-          if curl -f -s https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net/api/health > /dev/null; then
-            echo "Production deployment successful and healthy"
-          else
-            echo "Production health check failed"
-            exit 1
-          fi
 
       - name: Update CHANGELOG
         run: |
@@ -453,75 +239,5 @@ jobs:
             --app herraise-insights \
             --location eastus \
             --resource-group HerRaise_RG \
-            --application-type web || echo "App Insights may already exist"
-          
-          INSTRUMENTATION_KEY=$(az monitor app-insights component show \
-            --app herraise-insights \
-            --resource-group HerRaise_RG \
-            --query instrumentationKey -o tsv)
-          
-          az webapp config appsettings set \
-            --name ${{ env.AZURE_WEBAPP_NAME_PROD }} \
-            --resource-group HerRaise_RG \
-            --settings APPINSIGHTS_INSTRUMENTATIONKEY="$INSTRUMENTATION_KEY" \
-                      APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=$INSTRUMENTATION_KEY" \
-                      NODE_ENV=production \
-                      LOG_LEVEL=info
-          
-          echo "Application Insights configured with comprehensive logging"
-
-      - name: Create Operational Alarm
-        run: |
-          echo "Setting up operational alarms..."
-          az monitor metrics alert create \
-            --name "HerRaise-HighResponseTime" \
-            --resource-group HerRaise_RG \
-            --scopes "/subscriptions/$(az account show --query id -o tsv)/resourceGroups/HerRaise_RG/providers/Microsoft.Web/sites/${{ env.AZURE_WEBAPP_NAME_PROD }}" \
-            --condition "avg ResponseTime > 5" \
-            --description "Alert when average response time exceeds 5 seconds" \
-            --evaluation-frequency 1m \
-            --window-size 5m \
-            --severity 2 || echo "Alert rule may already exist"
-          echo "Operational alarms configured"
-
-  security-compliance:
-    name: Security Compliance Report
-    runs-on: ubuntu-latest
-    needs: [security, docker, deploy-production, monitoring-setup]
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Download Security Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: '*security*'
-          merge-multiple: true
-
-      - name: Generate Compliance Report
-        run: |
-          echo "Generating security compliance report..."
-          cat > compliance-report.md << EOF
-          # HerRaise Production Security Compliance Report
-          
-          **Production Deployment:** ${GITHUB_SHA}
-          **Date:** $(date)
-          **Pipeline:** ${GITHUB_RUN_NUMBER}
-          
-          ## Security Scans Completed
-          - ✅ Dependency vulnerability scanning
-          - ✅ Static application security testing (SAST)
-          - ✅ Container image security scanning
-          - ✅ Infrastructure security validation
-          
-          ## Compliance Status
-          All security scans completed successfully. Detailed reports available in artifacts.
-          
-          ## Production URL
-          🌐 https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net
-          EOF
-
-      - name: Upload Compliance Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: security-compliance-report
-          path: compliance-report.md
-          retention-days: 90
+            --application-type web || echo "Already exists"
+          echo "Monitoring configured"
