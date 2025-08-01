@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Manual approval requirement for production deployments
+- Comprehensive monitoring and observability with Application Insights
+- Operational alarms for high response time (>5 seconds)
+- Automated CHANGELOG.md updates on production deployments
+- Environment-specific URLs in GitHub Actions
+- Comprehensive application logging configuration
+
 ### Fixed
 - Fixed frontend serving issue where root path was returning empty response
 - Added explicit route handler for serving index.html at root path
