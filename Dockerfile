@@ -1,13 +1,15 @@
 FROM node:20-alpine AS base
 
 WORKDIR /app
-COPY package*.json ./
+
+# Copy built application from dist directory
+COPY dist/package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
 FROM base AS production
-COPY backend/ ./backend/
-COPY frontend/ ./frontend/
-COPY package*.json ./
+COPY dist/backend/ ./backend/
+COPY dist/frontend/ ./frontend/
+COPY dist/package*.json ./
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nodeuser -u 1001
