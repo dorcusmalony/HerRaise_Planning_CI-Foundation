@@ -31,17 +31,17 @@ jobs:
 
       - name: Run build process
         run: |
-          echo "🔨 Starting build process..."
+          echo " Starting build process..."
           npm run build:production
-          echo "✅ Build completed successfully"
+          echo " Build completed successfully"
 
       - name: Validate build output
         run: |
-          echo "🔍 Validating build output..."
+          echo " Validating build output..."
           test -d dist/backend || (echo "❌ Backend files missing" && exit 1)
           test -d dist/frontend || (echo "❌ Frontend files missing" && exit 1)
           test -f dist/package.json || (echo "❌ Package.json missing" && exit 1)
-          echo "✅ Build validation passed"
+          echo " Build validation passed"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -69,15 +69,15 @@ jobs:
 
       - name: Run tests
         run: |
-          echo "🧪 Running test suite..."
+          echo " Running test suite..."
           npm test
-          echo "✅ Tests completed"
+          echo " Tests completed"
 
       - name: Run linting
         run: |
-          echo "🔍 Running code quality checks..."
+          echo " Running code quality checks..."
           npm run lint
-          echo "✅ Linting completed"
+          echo " Linting completed"
 
   security:
     name: Security Scanning
@@ -98,7 +98,7 @@ jobs:
 
       - name: Dependency vulnerability scanning
         run: |
-          echo "🔍 Starting dependency vulnerability scanning..."
+          echo " Starting dependency vulnerability scanning..."
           mkdir -p security-reports
           
           # Run comprehensive security audit
@@ -107,24 +107,24 @@ jobs:
           npm audit --json > security-reports/full-audit.json 2>/dev/null || true
           
           # Generate summary report
-          echo "📊 Security Scan Summary:" > security-reports/summary.txt
+          echo " Security Scan Summary:" > security-reports/summary.txt
           echo "Scan Date: $(date)" >> security-reports/summary.txt
           echo "Project: HerRaise Platform" >> security-reports/summary.txt
           echo "" >> security-reports/summary.txt
           
           if npm audit --audit-level=critical --quiet 2>/dev/null; then
-            echo "✅ No critical vulnerabilities found" >> security-reports/summary.txt
+            echo " No critical vulnerabilities found" >> security-reports/summary.txt
           else
-            echo "⚠️ Critical vulnerabilities detected" >> security-reports/summary.txt
+            echo " Critical vulnerabilities detected" >> security-reports/summary.txt
           fi
           
-          echo "✅ Dependency scanning completed"
+          echo " Dependency scanning completed"
 
       - name: Automated Vulnerability Remediation
         run: |
-          echo "🔧 Attempting automated vulnerability fixes..."
+          echo " Attempting automated vulnerability fixes..."
           npm audit fix --force 2>/dev/null || echo "Some vulnerabilities require manual intervention"
-          echo "✅ Auto-remediation completed"
+          echo " Auto-remediation completed"
 
       - name: SAST (Static Application Security Testing)
         uses: aquasecurity/trivy-action@master
@@ -164,15 +164,15 @@ jobs:
 
       - name: Login to Azure Container Registry
         run: |
-          echo "🔐 Logging into Azure Container Registry..."
+          echo " Logging into Azure Container Registry..."
           az acr login --name ${{ env.ACR_NAME }}
-          echo "✅ Successfully logged into ACR"
+          echo " Successfully logged into ACR"
 
       - name: Build Docker image
         run: |
-          echo "🐳 Building Docker image..."
+          echo " Building Docker image..."
           docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-          echo "✅ Docker image built successfully"
+          echo " Docker image built successfully"
 
       - name: Container Security Scanning
         uses: aquasecurity/trivy-action@master
@@ -183,9 +183,9 @@ jobs:
 
       - name: Push Docker image
         run: |
-          echo "📤 Pushing image to registry..."
+          echo " Pushing image to registry..."
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          echo "✅ Image pushed successfully"
+          echo " Image pushed successfully"
 
   deploy-staging:
     name: Deploy to Staging
@@ -201,15 +201,15 @@ jobs:
 
       - name: Deploy to Staging
         run: |
-          echo "🚀 Deploying to staging environment..."
+          echo " Deploying to staging environment..."
           az webapp config container set \
             --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} \
             --resource-group HerRaise_RG \
             --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
           az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} --resource-group HerRaise_RG
-          echo "✅ Staging deployment completed"
-          echo "🌐 Staging URL: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net"
+          echo " Staging deployment completed"
+          echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net"
 
   deploy-production:
     name: Deploy to Production (Manual Approval Required)
@@ -230,19 +230,19 @@ jobs:
 
       - name: Deploy to Production
         run: |
-          echo "🚀 Deploying to production environment..."
+          echo " Deploying to production environment..."
           az webapp config container set \
             --name ${{ env.AZURE_WEBAPP_NAME_PROD }} \
             --resource-group HerRaise_RG \
             --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
           az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_PROD }} --resource-group HerRaise_RG
-          echo "✅ Production deployment completed"
-          echo "🌐 Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
+          echo " Production deployment completed"
+          echo " Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
 
       - name: Update CHANGELOG
         run: |
-          echo "📝 Updating CHANGELOG..."
+          echo " Updating CHANGELOG..."
           echo "## [$(date +%Y.%m.%d)] - $(date +%Y-%m-%d)" > TEMP_CHANGELOG
           echo "" >> TEMP_CHANGELOG
           echo "### Deployed" >> TEMP_CHANGELOG
@@ -273,7 +273,7 @@ jobs:
 
       - name: Configure Application Insights
         run: |
-          echo "📊 Setting up Application Insights monitoring..."
+          echo " Setting up Application Insights monitoring..."
           az monitor app-insights component create \
             --app herraise-insights \
             --location eastus \
@@ -292,7 +292,7 @@ jobs:
                       NODE_ENV=production \
                       LOG_LEVEL=info
           
-          echo "✅ Application Insights configured"
+          echo " Application Insights configured"
 
       - name: Create Operational Alarm
         run: |
