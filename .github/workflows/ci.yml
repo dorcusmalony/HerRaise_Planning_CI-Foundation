@@ -64,17 +64,28 @@ jobs:
 
       - name: Run build process
         run: |
-          echo " Starting build process..."
+          echo "Starting build process..."
           npm run build:production
-          echo " Build completed successfully"
+          echo "Build completed successfully"
 
       - name: Validate build output
         run: |
+
+          echo "Validating build output..."
+          ls -la dist/ || echo "Dist directory contents:"
+          test -d dist/backend || (echo "Backend files missing" && exit 1)
+          test -d dist/frontend || (echo "Frontend files missing" && exit 1)
+          test -f dist/package.json || (echo "Package.json missing" && exit 1)
+          echo "Build validation passed"
+          echo "Build contents:"
+          find dist -type f | head -10
+
           echo " Validating build output..."
           test -d dist/backend || (echo " Backend files missing" && exit 1)
           test -d dist/frontend || (echo " Frontend files missing" && exit 1)
           test -f dist/package.json || (echo " Package.json missing" && exit 1)
           echo " Build validation passed"
+
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -107,7 +118,7 @@ jobs:
         run: npm run lint
 
   security:
-    name: DevSecOps Security Scanning
+    name: Security Scanning
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -123,8 +134,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Dependency Vulnerability Scanning
+      - name: Dependency vulnerability scanning
         run: |
+
+          echo "Starting comprehensive dependency vulnerability scanning..."
+          mkdir -p security-reports
+
 
           echo " Starting comprehensive dependency vulnerability scanning..."
           
@@ -170,34 +185,21 @@ jobs:
           
           # Run npm audit with detailed output
           echo "📋 Scanning for critical vulnerabilities..."
+
           npm audit --audit-level=critical --json > security-reports/critical-vulnerabilities.json 2>/dev/null || true
-          
-          echo "📋 Scanning for high severity vulnerabilities..."
-          npm audit --audit-level=high --json > security-reports/high-vulnerabilities.json 2>/dev/null || true
-          
-          echo "📋 Full vulnerability report..."
-          npm audit --json > security-reports/full-audit.json 2>/dev/null || true
-          
-          # Generate human-readable summary
-          echo "📊 Security Scan Summary:" > security-reports/summary.txt
+          npm audit --audit-level=high --json > high_audit.json 2>/dev/null || true
+          echo "Security Scan Summary:" > security-reports/summary.txt
           echo "Scan Date: $(date)" >> security-reports/summary.txt
           echo "Project: HerRaise Platform" >> security-reports/summary.txt
           echo "" >> security-reports/summary.txt
-          
 
 
-          # Check and report critical issues
           if npm audit --audit-level=critical --quiet 2>/dev/null; then
-            echo "✅ No critical vulnerabilities found" >> security-reports/summary.txt
+            echo "No critical vulnerabilities found"
           else
-            echo "⚠️ Critical vulnerabilities detected:" >> security-reports/summary.txt
-            npm audit --audit-level=critical 2>/dev/null | head -20 >> security-reports/summary.txt || true
-          fi
-          
-          # Check and report high severity issues
-          if npm audit --audit-level=high --quiet 2>/dev/null; then
-            echo "✅ No high severity vulnerabilities found" >> security-reports/summary.txt
-          else
+
+            echo "Critical vulnerabilities detected - see details below"
+            npm audit --audit-level=critical 2>/dev/null || true
 
             echo " High severity vulnerabilities detected:" >> security-reports/summary.txt
 
@@ -216,12 +218,15 @@ jobs:
 
 
             npm audit --audit-level=high 2>/dev/null | head -20 >> security-reports/summary.txt || true
+
           fi
-          
-          echo "✅ Dependency vulnerability scanning completed"
+          echo "Security audit completed (non-blocking mode)"
 
       - name: Automated Vulnerability Remediation
         run: |
+
+          echo "Attempting automated vulnerability fixes..."
+
 
           echo " Attempting automated vulnerability fixes..."
           npm audit fix --force 2>/dev/null || echo "Some vulnerabilities require manual intervention"
@@ -242,8 +247,9 @@ jobs:
           echo "🔧 Attempting automated vulnerability fixes..."
 
 
+
           npm audit fix --force 2>/dev/null || echo "Some vulnerabilities require manual intervention"
-          echo "✅ Auto-remediation attempt completed"
+          echo "Auto-remediation attempt completed"
 
 
       - name: SAST (Static Application Security Testing)
@@ -251,9 +257,10 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: '.'
-          format: 'sarif'
-          output: 'security-reports/trivy-sast.sarif'
           exit-code: '0'
+
+          format: 'table'
+
 
       - name: Generate Security Report
         run: |
@@ -304,6 +311,7 @@ jobs:
           echo "✅ Security documentation generated"
 
 
+
       - name: Upload Security Artifacts
         uses: actions/upload-artifact@v4
         if: always()
@@ -330,6 +338,11 @@ jobs:
       - name: Check Azure credentials
         run: |
           if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
+
+            echo "AZURE_CREDENTIALS secret not configured"
+            echo "SKIP_AZURE_PUSH=true" >> $GITHUB_ENV
+          else
+            echo "Azure credentials found"
 
             echo " AZURE_CREDENTIALS secret not configured"
             echo " To set up Azure authentication:"
@@ -367,15 +380,18 @@ jobs:
 
             echo "✅ Azure credentials found"
 
+
             echo "SKIP_AZURE_PUSH=false" >> $GITHUB_ENV
           fi
 
-      - name: Azure Login (conditional)
+      - name: Azure Login
         if: env.SKIP_AZURE_PUSH == 'false'
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+
+      - name: Login to Azure Container Registry
 
       - name: Build Docker image
         run: |
@@ -383,14 +399,29 @@ jobs:
           echo " Docker image built successfully"
 
       - name: Log in to Azure Container Registry (conditional)
+
         if: env.SKIP_AZURE_PUSH == 'false'
         run: |
           az acr login --name ${{ env.ACR_NAME }}
+          echo "Successfully logged into ACR"
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-          echo "✅ Docker image built successfully"
+          echo "Starting Docker build..."
+          echo "Build context contents:"
+          ls -la
+          echo "Dist directory contents:"
+          ls -la dist/ || echo "No dist directory found"
+          
+          # Build the Docker image
+          docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} . || {
+            echo "Docker build failed. Checking Dockerfile..."
+            cat Dockerfile
+            exit 1
+          }
+          
+          echo "Docker image built successfully"
+          docker images | grep ${{ env.IMAGE_NAME }}
 
 
 
@@ -437,9 +468,15 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          format: 'sarif'
-          output: 'container-security-report.sarif'
+          format: 'table'
           exit-code: '0'
+
+
+      - name: Push Docker image
+        if: env.SKIP_AZURE_PUSH == 'false'
+        run: |
+          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          echo "Image pushed to registry successfully"
 
       - name: Container Vulnerability Summary
         run: |
@@ -463,6 +500,11 @@ jobs:
       - name: Docker build summary
         run: |
           if [ "$SKIP_AZURE_PUSH" == "true" ]; then
+
+            echo "Docker image built locally (Azure push skipped - credentials not configured)"
+          else
+            echo "Docker image built and pushed to Azure Container Registry"
+
 
             echo " Docker image built locally (Azure push skipped - credentials not configured)"
             echo " To enable Azure deployment, configure AZURE_CREDENTIALS secret"
@@ -488,6 +530,7 @@ jobs:
           else
             echo "✅ Docker image built and pushed to Azure Container Registry"
 
+
           fi
 
   deploy-staging:
@@ -500,6 +543,9 @@ jobs:
       - name: Check deployment prerequisites
         run: |
           if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
+
+            echo "Cannot deploy - Azure credentials not configured"
+
 
             echo " Cannot deploy - Azure credentials not configured"
             exit 1
@@ -523,15 +569,17 @@ jobs:
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
 
 
+
             exit 1
           fi
-          echo "✅ Prerequisites validated"
+          echo "Prerequisites validated"
 
 
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Deploy to Azure Web App (Staging)
         run: |
           az webapp config container set \
@@ -540,6 +588,14 @@ jobs:
             --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
           az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} --resource-group HerRaise_RG
+
+          echo "Staging deployment completed"
+          echo "Staging URL: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net"
+
+      - name: Post-Deployment Health Check
+        run: |
+          sleep 30
+
 
           echo " Staging deployment completed"
           echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net"
@@ -578,9 +634,16 @@ jobs:
           sleep 30  # Allow app to start
           
           # Health check endpoint
+
           if curl -f -s https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net/api/health > /dev/null; then
-            echo "✅ Staging deployment health check passed"
+            echo "Staging deployment health check passed"
           else
+
+            echo "Health check failed - manual verification required"
+          fi
+
+  deploy-production:
+    name: Production Deployment with Manual Approval
 
 
             echo "Health check failed - manual verification required"
@@ -597,6 +660,7 @@ jobs:
   deploy-production:
     name: Automated Production Deployment
 
+
     runs-on: ubuntu-latest
     needs: docker
     if: github.ref == 'refs/heads/main'
@@ -604,9 +668,15 @@ jobs:
       name: production
       url: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Check deployment prerequisites
         run: |
           if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
+
+            echo "Cannot deploy - Azure credentials not configured"
+
 
             echo " Cannot deploy - Azure credentials not configured"
             exit 1
@@ -631,15 +701,19 @@ jobs:
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
 
 
+
             exit 1
           fi
-          echo "✅ Prerequisites validated"
+          echo "Prerequisites validated"
 
 
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+
+
       - name: Deploy to Azure Web App (Production)
         run: |
           az webapp config container set \
@@ -648,6 +722,10 @@ jobs:
             --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
           az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_PROD }} --resource-group HerRaise_RG
+
+          echo "Production deployment completed"
+          echo "Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
+
           echo " Production deployment completed"
           echo " Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
       - name: Production Deployment Validation
@@ -754,15 +832,16 @@ jobs:
 
 
 
+
       - name: Production Deployment Validation
         run: |
-          echo "🔍 Validating production deployment..."
-          
-          # Wait for deployment to stabilize
           sleep 45
-          
-          # Production health check
           if curl -f -s https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net/api/health > /dev/null; then
+
+            echo "Production deployment successful and healthy"
+          else
+            echo "Production health check failed"
+
 
             echo " Production deployment successful and healthy"
             echo " Live production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
@@ -783,9 +862,79 @@ jobs:
             echo "Production health check failed"
 
 
+
             exit 1
           fi
+
+      - name: Update CHANGELOG
+        run: |
+          echo "## [$(date +%Y.%m.%d)] - $(date +%Y-%m-%d)" > TEMP_CHANGELOG
+          echo "" >> TEMP_CHANGELOG
+          echo "### Deployed" >> TEMP_CHANGELOG
+          echo "- Production deployment of commit ${GITHUB_SHA:0:7}" >> TEMP_CHANGELOG
+          echo "- Pipeline run: ${GITHUB_RUN_NUMBER}" >> TEMP_CHANGELOG
+          echo "" >> TEMP_CHANGELOG
+          cat CHANGELOG.md >> TEMP_CHANGELOG
+          mv TEMP_CHANGELOG CHANGELOG.md
+
+      - name: Commit CHANGELOG update
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add CHANGELOG.md
+          git commit -m "chore: update CHANGELOG for production deployment ${GITHUB_SHA:0:7}" || exit 0
+          git push || exit 0
+
+  monitoring-setup:
+    name: Configure Monitoring and Alerts
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Configure Application Insights
+        run: |
+          echo "Setting up Application Insights monitoring..."
+          az monitor app-insights component create \
+            --app herraise-insights \
+            --location eastus \
+            --resource-group HerRaise_RG \
+            --application-type web || echo "App Insights may already exist"
           
+          INSTRUMENTATION_KEY=$(az monitor app-insights component show \
+            --app herraise-insights \
+            --resource-group HerRaise_RG \
+            --query instrumentationKey -o tsv)
+          
+
+          az webapp config appsettings set \
+            --name ${{ env.AZURE_WEBAPP_NAME_PROD }} \
+            --resource-group HerRaise_RG \
+            --settings APPINSIGHTS_INSTRUMENTATIONKEY="$INSTRUMENTATION_KEY" \
+                      APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=$INSTRUMENTATION_KEY" \
+                      NODE_ENV=production \
+                      LOG_LEVEL=info
+          
+          echo "Application Insights configured with comprehensive logging"
+
+      - name: Create Operational Alarm
+        run: |
+          echo "Setting up operational alarms..."
+          az monitor metrics alert create \
+            --name "HerRaise-HighResponseTime" \
+            --resource-group HerRaise_RG \
+            --scopes "/subscriptions/$(az account show --query id -o tsv)/resourceGroups/HerRaise_RG/providers/Microsoft.Web/sites/${{ env.AZURE_WEBAPP_NAME_PROD }}" \
+            --condition "avg ResponseTime > 5" \
+            --description "Alert when average response time exceeds 5 seconds" \
+            --evaluation-frequency 1m \
+            --window-size 5m \
+            --severity 2 || echo "Alert rule may already exist"
+          echo "Operational alarms configured"
+
           # Log deployment success
 
           echo " Deployment Metrics:"
@@ -804,13 +953,18 @@ jobs:
           echo "- Pipeline: ${{ github.run_number }}"
 
 
+
   security-compliance:
     name: Security Compliance Report
     runs-on: ubuntu-latest
 
     needs: [security, docker, deploy-production, monitoring-setup]
 
+
+    needs: [security, docker, deploy-production, monitoring-setup]
+
     needs: [security, docker, deploy-production]
+
 
     if: github.ref == 'refs/heads/main'
     steps:
@@ -822,7 +976,7 @@ jobs:
 
       - name: Generate Compliance Report
         run: |
-          echo "📋 Generating security compliance report..."
+          echo "Generating security compliance report..."
           cat > compliance-report.md << EOF
           # HerRaise Production Security Compliance Report
           
