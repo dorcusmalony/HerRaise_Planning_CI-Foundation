@@ -10,7 +10,12 @@ HerRaise is a web-based mentorship platform designed to address the unique chall
 **Live Demo**: [Production Environment](https://herraisehub.azurewebsites.net)
 **Staging Environment**: [Development Preview](https://herraise-app-staging.azurewebsites.net)
 
+
+**Live Demo**: [Production Environment](https://herraisehub.azurewebsites.net)
+**Staging Environment**: [Development Preview](https://herraise-app-staging.azurewebsites.net)
+
 **Live Demo**: https://herraisehub.azurewebsites.net
+
 
 
 ## Target Impact
@@ -141,6 +146,7 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 
 ##  Security & DevSecOps
 
+
 ### Automated Security Scanning
 - ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
 - ✅ **Container Image Security** - Trivy scanning for container vulnerabilities
@@ -153,6 +159,22 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 -  HTTPS enforcement in all environments
 -  Environment variable encryption via Azure Key Vault
 -  Automated security reporting and artifact retention
+
+
+
+### Automated Security Scanning
+- ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
+- ✅ **Container Image Security** - Trivy scanning for container vulnerabilities
+- ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
+- ✅ **Infrastructure Security** - Terraform security validation
+
+### Security Policies
+-  Branch protection on `main` branch with required reviews
+-  Mandatory security scans before deployment
+-  HTTPS enforcement in all environments
+-  Environment variable encryption via Azure Key Vault
+-  Automated security reporting and artifact retention
+
 
 ##  Monitoring & Observability
 
@@ -178,6 +200,28 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 - **Issues**: Report bugs via GitHub Issues
 - **Discussions**: Community support via GitHub Discussions
 - **Documentation**: `/docs` directory for detailed guides
+
+---
+
+## Phase 1: Foundation & CI/CD Pipeline ✅
+
+This repository meets all phase one requirements:
+
+- **Project Planning & Management**:  
+  - [Project Board](<insert-your-project-board-link-here>) tracks all major milestones and tasks.
+  - Issues/Epics for "Containerization," "IaC," "CD Pipeline," and more are created and managed.
+
+- **Secure Repository Setup**:  
+  - Main and develop branches established.
+  - Branch protection rules require PRs, reviews, and CI status checks before merging.
+
+- **Application Development & CI**:  
+  - Baseline application (frontend, backend, database) implemented.
+  - Automated CI pipeline (GitHub Actions) runs lint and unit tests on every PR.
+  - See [Development Workflow](#development-workflow) and [Quick Start](#quick-start) for setup instructions.
+
+> **Repository:** [GitHub Repository](<insert-your-repo-link-here>)  
+> **Project Board:** [Project Board](<insert-your-project-board-link-here>)
 
 ---
 
