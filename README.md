@@ -317,7 +317,10 @@ terraform validate
 ## Vision
 Building a platform that will provide long-term impact by supporting South Sudanese girls through mentorship and community empowerment.
 
+## Live Environments
 
+- **Staging**: https://herraise-app-staging.azurewebsites.net
+- **Production**: https://herraisehub.azurewebsites.net
 
 
 
@@ -335,6 +338,7 @@ Building a platform that will provide long-term impact by supporting South Sudan
 #   C D   P i p e l i n e   T e s t 
  
  
+
 
 
 

@@ -7,6 +7,9 @@ on:
     branches: [develop, main]
 
 
+    branches: [develop, main]
+
+
 
     branches: [develop, main]
   pull_request:
@@ -24,8 +27,10 @@ on:
 
 
     branches: [main, develop]
+
   pull_request:
-    branches: [main, develop]
+    branches: [develop, main]
+
 
 
 
@@ -179,6 +184,9 @@ jobs:
             echo " High severity vulnerabilities detected:" >> security-reports/summary.txt
 
 
+            echo " High severity vulnerabilities detected:" >> security-reports/summary.txt
+
+
 
             echo " High severity vulnerabilities detected:" >> security-reports/summary.txt
 
@@ -187,6 +195,7 @@ jobs:
 
 
             echo "⚠️ High severity vulnerabilities detected:" >> security-reports/summary.txt
+
 
 
             npm audit --audit-level=high 2>/dev/null | head -20 >> security-reports/summary.txt || true
@@ -200,6 +209,9 @@ jobs:
           echo " Attempting automated vulnerability fixes..."
 
 
+          echo " Attempting automated vulnerability fixes..."
+
+
 
           echo " Attempting automated vulnerability fixes..."
 
@@ -208,6 +220,7 @@ jobs:
 
 
           echo "🔧 Attempting automated vulnerability fixes..."
+
 
 
           npm audit fix --force 2>/dev/null || echo "Some vulnerabilities require manual intervention"
@@ -228,6 +241,9 @@ jobs:
           echo " Generating comprehensive security report..."
 
 
+          echo " Generating comprehensive security report..."
+
+
 
           echo " Generating comprehensive security report..."
 
@@ -236,6 +252,7 @@ jobs:
 
 
           echo "📋 Generating comprehensive security report..."
+
 
 
           cat > security-reports/security-dashboard.md << EOF
@@ -294,6 +311,10 @@ jobs:
             echo " To set up Azure authentication:"
 
 
+            echo " AZURE_CREDENTIALS secret not configured"
+            echo " To set up Azure authentication:"
+
+
 
             echo " AZURE_CREDENTIALS secret not configured"
             echo " To set up Azure authentication:"
@@ -305,6 +326,7 @@ jobs:
 
             echo " AZURE_CREDENTIALS secret not configured"
             echo "To set up Azure authentication:"
+
 
 
             echo "   1. Create Azure Service Principal:"
@@ -402,6 +424,10 @@ jobs:
             echo " To enable Azure deployment, configure AZURE_CREDENTIALS secret"
 
 
+            echo " Docker image built locally (Azure push skipped - credentials not configured)"
+            echo " To enable Azure deployment, configure AZURE_CREDENTIALS secret"
+
+
 
             echo " Docker image built locally (Azure push skipped - credentials not configured)"
             echo " To enable Azure deployment, configure AZURE_CREDENTIALS secret"
@@ -412,6 +438,7 @@ jobs:
 
             echo "🔧 Docker image built locally (Azure push skipped - credentials not configured)"
             echo "📋 To enable Azure deployment, configure AZURE_CREDENTIALS secret"
+
 
           else
             echo "✅ Docker image built and pushed to Azure Container Registry"
@@ -435,6 +462,10 @@ jobs:
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
 
+
+            echo " Cannot deploy - Azure credentials not configured"
+            echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
 
@@ -442,6 +473,7 @@ jobs:
 
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
 
 
             exit 1
@@ -472,6 +504,9 @@ jobs:
           echo " Running post-deployment health checks..."
 
 
+          echo " Running post-deployment health checks..."
+
+
 
           echo " Running post-deployment health checks..."
 
@@ -482,12 +517,16 @@ jobs:
           echo "🏥 Running post-deployment health checks..."
 
 
+
           sleep 30  # Allow app to start
           
           # Health check endpoint
           if curl -f -s https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net/api/health > /dev/null; then
             echo "✅ Staging deployment health check passed"
           else
+
+            echo "⚠ Health check failed - manual verification required"
+
 
 
             echo "Health check failed - manual verification required"
@@ -497,6 +536,7 @@ jobs:
             echo "⚠ Health check failed - manual verification required"
 
             echo "⚠️ Health check failed - manual verification required"
+
 
 
           fi
@@ -516,10 +556,6 @@ jobs:
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
 
 
-
-            echo " Cannot deploy - Azure credentials not configured"
-            echo " Set up AZURE_CREDENTIALS secret to enable deployment"
-
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
 
@@ -528,7 +564,16 @@ jobs:
             echo " Cannot deploy - Azure credentials not configured"
             echo " Set up AZURE_CREDENTIALS secret to enable deployment"
 
+            echo " Cannot deploy - Azure credentials not configured"
+            echo " Set up AZURE_CREDENTIALS secret to enable deployment"
 
+
+
+            echo " Cannot deploy - Azure credentials not configured"
+            echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+
+
+p
             exit 1
           fi
           echo "✅ Prerequisites validated"
@@ -537,6 +582,14 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME_PROD }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Deploy to Azure Web App (Container)
         run: |
@@ -559,10 +612,11 @@ jobs:
           echo " Commit: ${{ github.sha }}"
 
 
-          echo "✅ Production deployment completed"
-          echo "🌐 Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
-          echo "📅 Deployed at: $(date)"
-          echo "🔖 Commit: ${{ github.sha }}"
+          echo " Production deployment completed"
+          echo " Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
+          echo " Deployed at: $(date)"
+          echo " Commit: ${{ github.sha }}"
+
 
 
 
@@ -576,23 +630,29 @@ jobs:
           # Production health check
           if curl -f -s https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net/api/health > /dev/null; then
 
-            echo " Production deployment successful and healthy"
-            echo " Live production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
-          else
-            echo " Production health check failed"
-
 
 
             echo " Production deployment successful and healthy"
             echo " Live production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
           else
             echo " Production health check failed"
+
+
+
+
+            echo " Production deployment successful and healthy"
+            echo " Live production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
+          else
+            echo " Production health check failed"
+
+
 
 
             echo " Production deployment successful and healthy"
             echo " Live production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
           else
             echo "Production health check failed"
+
 
 
             exit 1
@@ -603,12 +663,16 @@ jobs:
           echo " Deployment Metrics:"
 
 
+          echo " Deployment Metrics:"
+
+
 
           echo " Deployment Metrics:"
 
           echo "📊 Deployment Metrics:"
 
   echo "📊 Deployment Metrics:"
+
 
 
           echo "- Commit: ${{ github.sha }}"
@@ -656,3 +720,4 @@ jobs:
           name: security-compliance-report
           path: compliance-report.md
           retention-days: 90
+
