@@ -1,14 +1,15 @@
-name: HerRaise CI/CD Pipeline
+name: HerRaise CI/CD Pipeline with DevSecOps
 
 on:
   push:
-    branches: [automated-deployment, main]
+    branches: [main, develop]
   pull_request:
-    branches: [automated-deployment, main]
+    branches: [main, develop]
 
 env:
-  AZURE_WEBAPP_NAME: herraisehub  # Match your actual app name
-  ACR_NAME: herraise  # Your ACR name from screenshots
+  AZURE_WEBAPP_NAME_STAGING: herraise-app-staging
+  AZURE_WEBAPP_NAME_PROD: herraisehub
+  ACR_NAME: herraise
   IMAGE_NAME: herraise-app
 
 jobs:
@@ -30,17 +31,17 @@ jobs:
 
       - name: Run build process
         run: |
-          echo "🔨 Starting build process..."
+          echo "Starting build process..."
           npm run build:production
-          echo "✅ Build completed successfully"
+          echo "Build completed successfully"
 
       - name: Validate build output
         run: |
-          echo "🔍 Validating build output..."
-          test -d dist/backend || (echo "❌ Backend files missing" && exit 1)
-          test -d dist/frontend || (echo "❌ Frontend files missing" && exit 1)
-          test -f dist/package.json || (echo "❌ Package.json missing" && exit 1)
-          echo "✅ Build validation passed"
+          echo "Validating build output..."
+          test -d dist/backend || (echo "Backend files missing" && exit 1)
+          test -d dist/frontend || (echo "Frontend files missing" && exit 1)
+          test -f dist/package.json || (echo "Package.json missing" && exit 1)
+          echo "Build validation passed"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -89,54 +90,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Attempt to fix vulnerabilities
+      - name: Dependency vulnerability scanning
         run: |
-          echo " Attempting to fix vulnerabilities..."
-          npm audit fix --force 2>/dev/null || echo "Some vulnerabilities couldn't be auto-fixed"
-          echo " Auto-fix attempt completed"
+          echo "Starting dependency vulnerability scanning..."
+          mkdir -p security-reports
+          npm audit --audit-level=critical --json > security-reports/critical-vulnerabilities.json 2>/dev/null || true
+          npm audit --audit-level=high --json > security-reports/high-vulnerabilities.json 2>/dev/null || true
+          echo "Security audit completed"
 
-      - name: Run security audit (informational only)
-        run: |
-          echo " Running comprehensive security audit..."
-          
-          # Check for critical vulnerabilities
-          echo "Checking critical vulnerabilities:"
-          npm audit --audit-level=critical --json > critical_audit.json 2>/dev/null || true
-          
-          # Check for high vulnerabilities  
-          echo "Checking high severity vulnerabilities:"
-          npm audit --audit-level=high --json > high_audit.json 2>/dev/null || true
-          
-          # Display results in a user-friendly format
-          echo " Security Audit Summary:"
-          
-          if npm audit --audit-level=critical --quiet 2>/dev/null; then
-            echo " No critical vulnerabilities found"
-          else
-            echo " Critical vulnerabilities detected - see details below"
-            npm audit --audit-level=critical 2>/dev/null || true
-          fi
-          
-          if npm audit --audit-level=high --quiet 2>/dev/null; then
-            echo " No high severity vulnerabilities found"
-          else
-            echo " High severity vulnerabilities detected - see details below"
-            npm audit --audit-level=high 2>/dev/null || true
-          fi
-          
-          echo " Security audit completed (non-blocking mode)"
-
-      - name: Upload audit results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: security-audit-results
-          path: |
-            critical_audit.json
-            high_audit.json
-          retention-days: 30
-
-      - name: Run Trivy filesystem scan
+      - name: SAST (Static Application Security Testing)
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
@@ -144,14 +106,13 @@ jobs:
           exit-code: '0'
           format: 'table'
 
-      - name: Security summary
-        run: |
-          echo " Security Scan Summary:"
-          echo "- Dependency vulnerabilities checked and logged"
-          echo "- Filesystem scan completed"
-          echo "- Audit results uploaded as artifacts"
-          echo "- Build continues (vulnerabilities logged for review)"
-          echo " Security scanning phase completed successfully"
+      - name: Upload Security Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-scan-results
+          path: security-reports/
+          retention-days: 30
 
   docker:
     name: Build and Push Container
@@ -168,92 +129,116 @@ jobs:
           name: build-files
           path: dist/
 
-      - name: Log in to Azure Container Registry
-        uses: azure/docker-login@v1
+      - name: Azure Login
+        uses: azure/login@v1
         with:
-          login-server: ${{ env.ACR_NAME }}.azurecr.io
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to Azure Container Registry
+        run: |
+          az acr login --name ${{ env.ACR_NAME }}
+          echo "Successfully logged into ACR"
 
       - name: Build Docker image
         run: |
           docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-          echo " Docker image built successfully"
+          echo "Docker image built successfully"
 
-      - name: Scan Docker image
+      - name: Container Security Scanning
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
           format: 'table'
+          exit-code: '0'
 
       - name: Push Docker image
         run: |
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          echo " Image pushed to registry successfully"
+          echo "Image pushed successfully"
 
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: docker
-    if: github.ref == 'refs/heads/develop' && vars.AZURE_DEPLOYMENT_ENABLED == 'true'
+    if: github.ref == 'refs/heads/develop'
     environment: staging
     steps:
-      - name: Check deployment prerequisites
-        run: |
-          echo " Checking Azure deployment prerequisites..."
-          if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}" ]; then
-            echo " Azure staging publish profile not configured"
-            echo "  To enable deployment:"
-            echo "   1. Deploy Azure infrastructure with Terraform"
-            echo "   2. Download publish profile from Azure Portal"
-            echo "   3. Add to GitHub Secrets as AZURE_WEBAPP_PUBLISH_PROFILE_STAGING"
-            exit 1
-          fi
-          echo " Prerequisites validated"
-
-      - name: Deploy to Azure Web App Staging
-        uses: azure/webapps-deploy@v2
+      - name: Azure Login
+        uses: azure/login@v1
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}-staging
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}
-          images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Verify staging deployment
+      - name: Deploy to Staging
         run: |
-          echo " Staging deployment completed"
-          echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME }}-staging.azurewebsites.net"
+          az webapp config container set \
+            --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} \
+            --resource-group HerRaise_RG \
+            --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
+          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} --resource-group HerRaise_RG
+          echo "Staging deployment completed"
 
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
     needs: docker
-    if: github.ref == 'refs/heads/main' && vars.AZURE_DEPLOYMENT_ENABLED == 'true'
-    environment: production
+    if: github.ref == 'refs/heads/main'
+    environment: 
+      name: production
+      url: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net
     steps:
-      - name: Check deployment prerequisites
-        run: |
-          echo " Checking Azure deployment prerequisites..."
-          if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}" ]; then
-            echo " Azure production publish profile not configured"
-            echo "  To enable deployment:"
-            echo "   1. Deploy Azure infrastructure with Terraform"
-            echo "   2. Download publish profile from Azure Portal"
-            echo "   3. Add to GitHub Secrets as AZURE_WEBAPP_PUBLISH_PROFILE"
-            echo "   4. Set repository variable AZURE_DEPLOYMENT_ENABLED=true"
-            exit 1
-          fi
-          echo " Prerequisites validated"
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Deploy to Azure Web App Production
-        uses: azure/webapps-deploy@v2
+      - name: Azure Login
+        uses: azure/login@v1
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Verify production deployment
+      - name: Deploy to Production
         run: |
-          echo " Production deployment completed"
-          echo " Production URL: https://herraisehub.azurewebsites.net"
-          echo " Deployed at: $(date)"
-          echo " Commit: ${{ github.sha }}"
+          az webapp config container set \
+            --name ${{ env.AZURE_WEBAPP_NAME_PROD }} \
+            --resource-group HerRaise_RG \
+            --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
+          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_PROD }} --resource-group HerRaise_RG
+          echo "Production deployment completed"
+
+      - name: Update CHANGELOG
+        run: |
+          echo "## [$(date +%Y.%m.%d)] - $(date +%Y-%m-%d)" > TEMP_CHANGELOG
+          echo "" >> TEMP_CHANGELOG
+          echo "### Deployed" >> TEMP_CHANGELOG
+          echo "- Production deployment of commit ${GITHUB_SHA:0:7}" >> TEMP_CHANGELOG
+          echo "" >> TEMP_CHANGELOG
+          cat CHANGELOG.md >> TEMP_CHANGELOG
+          mv TEMP_CHANGELOG CHANGELOG.md
+
+      - name: Commit CHANGELOG
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add CHANGELOG.md
+          git commit -m "chore: update CHANGELOG for deployment ${GITHUB_SHA:0:7}" || exit 0
+          git push || exit 0
+
+  monitoring:
+    name: Setup Monitoring
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Configure Application Insights
+        run: |
+          az monitor app-insights component create \
+            --app herraise-insights \
+            --location eastus \
+            --resource-group HerRaise_RG \
+            --application-type web || echo "Already exists"
+          echo "Monitoring configured"
