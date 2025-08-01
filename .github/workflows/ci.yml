@@ -227,14 +227,14 @@ jobs:
             echo "- Automated deployment via CI/CD pipeline"
             echo "- Monitoring and observability configured"
             echo ""
-            echo "### 📝 Changes in this Release"
+            echo "###  Changes in this Release"
             echo "$COMMITS"
             echo ""
             echo "### 🔗 Live URLs"
             echo "- **Production**: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
             echo "- **Staging**: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net"
             echo ""
-            echo "### 📊 Technical Details"
+            echo "###  Technical Details"
             echo "- **Build Number**: ${GITHUB_RUN_NUMBER}"
             echo "- **Deployment Time**: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
             echo "- **Triggered By**: ${GITHUB_ACTOR}"
@@ -443,10 +443,10 @@ jobs:
           # Health check with retry
           for i in {1..5}; do
             if curl -f -s "$PROD_URL/api/health" > /dev/null; then
-              echo "✅ Health check passed on attempt $i"
+              echo " Health check passed on attempt $i"
               break
             else
-              echo "⏳ Health check failed on attempt $i, retrying..."
+              echo " Health check failed on attempt $i, retrying..."
               sleep 10
             fi
           done
@@ -477,7 +477,7 @@ jobs:
           if curl -f -s "$PROD_URL" | grep -q "HerRaise"; then
             echo "✅ Production main page accessible"
           else
-            echo "❌ Production main page failed"
+            echo " Production main page failed"
             exit 1
           fi
           
@@ -497,7 +497,7 @@ jobs:
             exit 1
           fi
           
-          echo "🎉 All production endpoints are healthy!"
+          echo " All production endpoints are healthy!"
 
       - name: Update README with Live URLs
         run: |
@@ -520,13 +520,13 @@ jobs:
           cat > deployment-report.md << EOF
           # Deployment Report - $(date +"%Y-%m-%d %H:%M:%S")
           
-          ## 🚀 Deployment Summary
+          ##  Deployment Summary
           - **Commit**: ${GITHUB_SHA:0:7}
           - **Branch**: ${GITHUB_REF#refs/heads/}
           - **Triggered by**: ${GITHUB_ACTOR}
           - **Workflow**: ${GITHUB_RUN_NUMBER}
           
-          ## 🌐 Live URLs
+          ##  Live URLs
           - **Production**: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net
           - **Staging**: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net
           
@@ -539,7 +539,7 @@ jobs:
           - [x] Monitoring configured
           - [x] Health checks passed
           
-          ## 📊 Monitoring
+          ##  Monitoring
           - **Application Insights**: Configured
           - **Operational Alarms**: 3 alerts active
           - **Logging**: Enabled with retention
@@ -562,9 +562,9 @@ jobs:
 
       - name: Deployment Success Notification
         run: |
-          echo "🎉 HerRaise deployment completed successfully!"
-          echo "📍 Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
-          echo "🔧 Staging URL: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net"
-          echo "📊 Monitoring: Configured with Application Insights"
-          echo "🔔 Alerts: 3 operational alarms active"
-          echo "📝 All deployment requirements satisfied"
+          echo " HerRaise deployment completed successfully!"
+          echo " Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
+          echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net"
+          echo " Monitoring: Configured with Application Insights"
+          echo " Alerts: 3 operational alarms active"
+          echo " All deployment requirements satisfied"
