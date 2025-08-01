@@ -6,7 +6,7 @@
 
 HerRaise is a web-based mentorship platform designed to address the unique challenges faced by girls and young women in South Sudan. This MVP demonstrates professional software development practices including CI/CD, containerization, and Infrastructure as Code.
 
-**Live Demo**: [Coming Soon - Post Infrastructure Deployment]
+**Live Demo**: https://herraisehub.azurewebsites.net
 
 ## Target Impact
 
@@ -317,9 +317,15 @@ terraform validate
 ## Vision
 Building a platform that will provide long-term impact by supporting South Sudanese girls through mentorship and community empowerment.
 
+## Live Environments
 
+- **Staging Environment**: https://herraise-app-staging.azurewebsites.net
+- **Production Environment**: https://herraisehub.azurewebsites.net
 
+## Monitoring Dashboard
 
+- **Application Insights**: [Azure Portal - HerRaise Monitoring](https://portal.azure.com/#@/resource/subscriptions/{subscription-id}/resourceGroups/HerRaise_RG/providers/microsoft.insights/components/herraise-insights/overview)
+- **Operational Alarms**: Configured for response time > 5 seconds
 
 
 
@@ -337,3 +343,8 @@ Building a platform that will provide long-term impact by supporting South Sudan
 #   C D   P i p e l i n e   T e s t 
  
  
+
+
+
+
+
