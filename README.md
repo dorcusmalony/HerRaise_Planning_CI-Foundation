@@ -14,7 +14,12 @@ HerRaise is a web-based mentorship platform designed to address the unique chall
 **Live Demo**: [Production Environment](https://herraisehub.azurewebsites.net)
 **Staging Environment**: [Development Preview](https://herraise-app-staging.azurewebsites.net)
 
+
+**Live Demo**: [Production Environment](https://herraisehub.azurewebsites.net)
+**Staging Environment**: [Development Preview](https://herraise-app-staging.azurewebsites.net)
+
 **Live Demo**: https://herraisehub.azurewebsites.net
+
 
 
 
@@ -147,11 +152,23 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 ##  Security & DevSecOps
 
 
+
+
 ### Automated Security Scanning
 - ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
 - ✅ **Container Image Security** - Trivy scanning for container vulnerabilities
 - ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
 - ✅ **Infrastructure Security** - Terraform security validation
+
+
+### Security Policies
+-  Branch protection on `main` branch with required reviews
+-  Mandatory security scans before deployment
+-  HTTPS enforcement in all environments
+-  Environment variable encryption via Azure Key Vault
+-  Automated security reporting and artifact retention
+
+
 
 ### Security Policies
 -  Branch protection on `main` branch with required reviews
@@ -174,6 +191,7 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 -  HTTPS enforcement in all environments
 -  Environment variable encryption via Azure Key Vault
 -  Automated security reporting and artifact retention
+
 
 
 ##  Monitoring & Observability
