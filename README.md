@@ -6,7 +6,11 @@
 
 HerRaise is a web-based mentorship platform designed to address the unique challenges faced by girls and young women in South Sudan. This MVP demonstrates professional software development practices including CI/CD, containerization, and Infrastructure as Code.
 
-**Live Demo**: [Coming Soon - Post Infrastructure Deployment]
+
+
+
+
+
 
 ## Target Impact
 
@@ -63,9 +67,23 @@ chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 ## Development Milestones
 
 - [x] **Phase 1**: Foundation & CI Setup
-- [ ] **Phase 2**: Containerization & Infrastructure as Code
-- [ ] **Phase 3**: Continuous Deployment Pipeline
-- [ ] **Phase 4**: Monitoring & Security Hardening
+- [x] **Phase 2**: Containerization & Infrastructure as Code  
+- [x] **Phase 3**: Continuous Deployment Pipeline
+- [x] **Phase 4**: Monitoring & Security Hardening
+
+##  Live Environments
+
+| Environment | URL | Purpose | Auto-Deploy |
+|-------------|-----|---------|-------------|
+| **Production** | [herraisehub.azurewebsites.net](https://herraisehub.azurewebsites.net) | Live platform for users |  `main` branch |
+| **Staging** | [herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net](https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net) | Testing & validation |  `develop` branch |
+
+### API Endpoints
+- **Health Check**: `/api/health` - System health and metrics
+- **API Info**: `/api` - Service information and status
+- **Mentorship**: `/api/mentorship` - Mentorship program data
+- **Community**: `/api/community` - Community engagement stats
+- **System Status**: `/api/status` - Detailed system monitoring
 
 ## Repository Structure
 
@@ -120,21 +138,102 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 | **PostgreSQL** | Database service | Azure Database for PostgreSQL Flexible Server |
 | **Resource Group** | Resource management | Azure Resource Group |
 
-## Security Features
+##  Security & DevSecOps
 
-- Branch protection on `main` branch
-- Mandatory code reviews
-- Comprehensive dependency vulnerability scanning
-- Container image vulnerability scanning with Trivy
-- Environment variable encryption
-- HTTPS enforcement in production
-- Automated security fix attempts in CI pipeline
+
+
+
+### Automated Security Scanning
+- ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
+- ✅ **Container Image Security** - Trivy scanning for container vulnerabilities
+- ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
+- ✅ **Infrastructure Security** - Terraform security validation
+
+
+### Security Policies
+-  Branch protection on `main` branch with required reviews
+-  Mandatory security scans before deployment
+-  HTTPS enforcement in all environments
+-  Environment variable encryption via Azure Key Vault
+-  Automated security reporting and artifact retention
+
+
+
+
+### Security Policies
+-  Branch protection on `main` branch with required reviews
+-  Mandatory security scans before deployment
+-  HTTPS enforcement in all environments
+-  Environment variable encryption via Azure Key Vault
+-  Automated security reporting and artifact retention
+
+
+
+
+
+
+
+### Automated Security Scanning
+- ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
+- ✅ **Container Image Security** - Trivy scanning for container vulnerabilities
+- ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
+- ✅ **Infrastructure Security** - Terraform security validation
+
+### Security Policies
+-  Branch protection on `main` branch with required reviews
+-  Mandatory security scans before deployment
+-  HTTPS enforcement in all environments
+-  Environment variable encryption via Azure Key Vault
+-  Automated security reporting and artifact retention
+
+
+
+##  Monitoring & Observability
+
+### Application Monitoring
+- **Application Insights** - Real-time performance monitoring
+- **Custom Dashboard** - Visual monitoring interface
+- **Health Checks** - Automated endpoint monitoring
+- **Application Logging** - Comprehensive request/response logging
+
+### Operational Alarms
+1. **High Response Time Alert** - Triggers when avg response > 5 seconds
+2. **Low Availability Alert** - Monitors application uptime
+3. **High Error Rate Alert** - Detects elevated 5xx error rates
+
+### Logging Configuration
+- **Application Logs** - Request/response tracking with timestamps
+- **System Metrics** - Memory, CPU, and performance data
+- **Error Tracking** - Comprehensive error logging and reporting
+- **Retention Policy** - Automated log retention and cleanup
 
 ## Support & Documentation
 
 - **Issues**: Report bugs via GitHub Issues
 - **Discussions**: Community support via GitHub Discussions
 - **Documentation**: `/docs` directory for detailed guides
+
+---
+
+## Phase 1: Foundation & CI/CD Pipeline ✅
+
+This repository meets all phase one requirements:
+
+- **Project Planning & Management**:  
+  - [Project Board](<insert-your-project-board-link-here>) tracks all major milestones and tasks.
+  - Issues/Epics for "Containerization," "IaC," "CD Pipeline," and more are created and managed.
+
+- **Secure Repository Setup**:  
+  - Main and develop branches established.
+  - Branch protection rules require PRs, reviews, and CI status checks before merging.
+
+- **Application Development & CI**:  
+  - Baseline application (frontend, backend, database) implemented.
+  - Automated CI pipeline (GitHub Actions) runs lint and unit tests on every PR.
+  - See [Development Workflow](#development-workflow) and [Quick Start](#quick-start) for setup instructions.
+
+> **Repository:** [GitHub Repository](<insert-your-repo-link-here>)  
+> **Project Board:** [Project Board](<insert-your-project-board-link-here>)
 
 ---
 
@@ -176,12 +275,31 @@ AZURE_RESOURCE_GROUP=herraise-rg
 AZURE_CONTAINER_REGISTRY=herraiseacr.azurecr.io
 ```
 
-## CI/CD Pipeline
-- **Platform**: GitHub Actions with Azure integration
-- **Triggers**: Automatic on Pull Requests to main
-- **Checks**: ESLint, Prettier, Jest unit tests, Docker build
-- **Deployment**: Automated Azure App Service deployment
-- **Quality Gates**: All checks must pass before merging is allowed
+##  CI/CD Pipeline
+
+### Pipeline Stages
+1. **Build** - Application compilation and artifact creation
+2. **Test** - Automated testing suite execution
+3. **Security** - Comprehensive vulnerability scanning
+4. **Docker** - Container build and registry push
+5. **Deploy** - Automated deployment to environments
+6. **Monitor** - Observability and alerting setup
+7. **Validate** - Post-deployment health verification
+
+### Deployment Strategy
+- **Staging**: Auto-deploy on `develop` branch push
+- **Production**: Auto-deploy on `main` branch push
+- **Quality Gates**: All security and test checks must pass
+- **Rollback**: Automated rollback on health check failures
+
+### Pipeline Features
+- ✅ **Automated Testing** - Jest unit tests with coverage reporting
+- ✅ **Code Quality** - ESLint and formatting validation
+- ✅ **Security Scanning** - Multi-layer vulnerability detection
+- ✅ **Container Security** - Image vulnerability scanning
+- ✅ **Infrastructure Validation** - Terraform plan verification
+- ✅ **Health Monitoring** - Post-deployment validation
+- ✅ **Documentation Updates** - Automated CHANGELOG and README updates
 
 ## Pipeline Testing Protocol
 
@@ -200,12 +318,12 @@ git push origin test-pipeline-fix
 
 
 ### What to Watch For
-- ✅ **Linting**: ESLint checks pass without errors
-- ✅ **Formatting**: Prettier validation succeeds
-- ✅ **Testing**: Jest unit tests execute successfully
-- ✅ **Build**: Docker container builds without issues
-- ✅ **Security**: Vulnerability scans complete (may have warnings)
-- ✅ **Merge**: "Merge pull request" button becomes enabled
+-  **Linting**: ESLint checks pass without errors
+-  **Formatting**: Prettier validation succeeds
+-  **Testing**: Jest unit tests execute successfully
+-  **Build**: Docker container builds without issues
+-  **Security**: Vulnerability scans complete (may have warnings)
+-  **Merge**: "Merge pull request" button becomes enabled
 
 ### If Pipeline Fails Again
 ```bash
@@ -317,6 +435,15 @@ terraform validate
 ## Vision
 Building a platform that will provide long-term impact by supporting South Sudanese girls through mentorship and community empowerment.
 
+## Live Environments
+
+- **Staging Environment**: https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net
+- **Production Environment**: https://herraisehub.azurewebsites.net
+
+## Monitoring Dashboard
+
+- **Application Insights**: [Azure Portal - HerRaise Monitoring](https://portal.azure.com/#@/resource/subscriptions/{subscription-id}/resourceGroups/HerRaise_RG/providers/microsoft.insights/components/herraise-insights/overview)
+- **Operational Alarms**: Configured for response time > 5 seconds
 
 
 
@@ -334,6 +461,6 @@ Building a platform that will provide long-term impact by supporting South Sudan
 
 
 
-#   C D   P i p e l i n e   T e s t 
- 
- 
+
+
+
