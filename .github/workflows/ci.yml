@@ -113,26 +113,26 @@ jobs:
           
           # Check and report critical issues
           if npm audit --audit-level=critical --quiet 2>/dev/null; then
-            echo "✅ No critical vulnerabilities found" >> security-reports/summary.txt
+            echo " No critical vulnerabilities found" >> security-reports/summary.txt
           else
-            echo " Critical vulnerabilities detected:" >> security-reports/summary.txt
+            echo "⚠ Critical vulnerabilities detected:" >> security-reports/summary.txt
             npm audit --audit-level=critical 2>/dev/null | head -20 >> security-reports/summary.txt || true
           fi
           
           # Check and report high severity issues
           if npm audit --audit-level=high --quiet 2>/dev/null; then
-            echo "✅ No high severity vulnerabilities found" >> security-reports/summary.txt
+            echo " No high severity vulnerabilities found" >> security-reports/summary.txt
           else
-            echo  High severity vulnerabilities detected:" >> security-reports/summary.txt
+            echo "⚠ High severity vulnerabilities detected:" >> security-reports/summary.txt
             npm audit --audit-level=high 2>/dev/null | head -20 >> security-reports/summary.txt || true
           fi
           
-          echo "✅ Dependency vulnerability scanning completed"
+          echo " Dependency vulnerability scanning completed"
       - name: Automated Vulnerability Remediation
         run: |
           echo " Attempting automated vulnerability fixes..."
           npm audit fix --force 2>/dev/null || echo "Some vulnerabilities require manual intervention"
-          echo "✅ Auto-remediation attempt completed"
+          echo " Auto-remediation attempt completed"
       - name: SAST (Static Application Security Testing)
         uses: aquasecurity/trivy-action@master
         with:
@@ -148,10 +148,10 @@ jobs:
           cat > security-reports/security-dashboard.md << EOF
           # HerRaise Security Scan Report
           
-          **Scan Date:** $(date)
-          **Pipeline:** ${GITHUB_WORKFLOW}
-          **Commit:** ${GITHUB_SHA}
-          **Branch:** ${GITHUB_REF_NAME}
+          *Scan Date:* $(date)
+          *Pipeline:* ${GITHUB_WORKFLOW}
+          *Commit:* ${GITHUB_SHA}
+          *Branch:* ${GITHUB_REF_NAME}
           
           ## Vulnerability Summary
           $(cat security-reports/summary.txt)
@@ -222,7 +222,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-          echo "✅ Docker image built successfully"
+          echo " Docker image built successfully"
       - name: Container Image Security Scanning
         uses: aquasecurity/trivy-action@master
         with:
@@ -233,7 +233,7 @@ jobs:
 
       - name: Container Vulnerability Summary
         run: |
-          echo "🔍 Container Security Scan Summary:"
+          echo " Container Security Scan Summary:"
           trivy image --format table ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} || true
           echo " Container security scan completed"
       - name: Push Docker image (conditional)
@@ -290,7 +290,7 @@ jobs:
           if curl -f -s https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net/api/health > /dev/null; then
             echo " Staging deployment health check passed"
           else
-            echo " Health check failed - manual verification required"
+            echo "⚠ Health check failed - manual verification required"
           fi
   deploy-production:
     name: Automated Production Deployment
@@ -324,7 +324,7 @@ jobs:
           
           echo " Production deployment completed"
           echo " Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
-          echo "Deployed at: $(date)"
+          echo " Deployed at: $(date)"
           echo " Commit: ${{ github.sha }}"
       - name: Production Deployment Validation
         run: |
@@ -356,7 +356,7 @@ jobs:
       - name: Download Security Artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: '*security*'
+          pattern: 'security'
           merge-multiple: true
 
       - name: Generate Compliance Report
@@ -365,9 +365,9 @@ jobs:
           cat > compliance-report.md << EOF
           # HerRaise Production Security Compliance Report
           
-          **Production Deployment:** ${GITHUB_SHA}
-          **Date:** $(date)
-          **Pipeline:** ${GITHUB_RUN_NUMBER}
+          *Production Deployment:* ${GITHUB_SHA}
+          *Date:* $(date)
+          *Pipeline:* ${GITHUB_RUN_NUMBER}
           
           ## Security Scans Completed
           - ✅ Dependency vulnerability scanning
@@ -379,7 +379,7 @@ jobs:
           All security scans completed successfully. Detailed reports available in artifacts.
           
           ## Production URL
-           https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net
+          🌐 https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net
           EOF
       - name: Upload Compliance Report
         uses: actions/upload-artifact@v4
