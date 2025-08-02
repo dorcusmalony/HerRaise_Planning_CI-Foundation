@@ -4,38 +4,382 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HerRaise - Empowering South Sudanese Girls</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            max-width: 800px;
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: var(--header-bg-color);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .nav {
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
         }
-        h1 {
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #667eea;
+        }
+        
+        .hero {
+            margin-top: 80px;
+            padding: 4rem 2rem;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 0.5rem;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+        }
+        
+        .features {
+            background: white;
+            padding: 4rem 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e9ecef;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
             color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        .stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 2rem;
             text-align: center;
         }
-        .subtitle {
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-item h3 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            margin-top: 1rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        .section-subtitle {
             text-align: center;
             color: #7f8c8d;
-            margin-bottom: 30px;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>HerRaise</h1>
-        <p class="subtitle">Empowering South Sudanese Girls Through Digital Mentorship</p>
-        <p>Welcome to HerRaise - a platform designed to provide mentorship and support for girls and young women in South Sudan.</p>
-        <p>This is the MVP frontend. The application is currently in development.</p>
-    </div>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">HerRaise</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#mentorship">Mentorship</a></li>
+                <li><a href="#community">Community</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>HerRaise</h1>
+            <p class="subtitle">Empowering South Sudanese Girls Through Digital Mentorship</p>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.9;">Breaking barriers, building futures - connecting young women with mentors, resources, and opportunities for growth and empowerment.</p>
+            <a href="#mentorship" class="cta-button">
+                <i class="fas fa-rocket"></i> Start Your Journey
+            </a>
+            <a href="#community" class="cta-button">
+                <i class="fas fa-users"></i> Join Community
+            </a>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+
+                <span>Platform Active - MVP Version</span>
+            </div>
+        </div>
+    </section>
+    
+    <section class="features" id="mentorship">
+        <div class="container">
+            <h2 class="section-title">Empowerment Through Connection</h2>
+            <p class="section-subtitle">Our platform provides comprehensive support through mentorship, education, and community building designed specifically for South Sudanese girls and young women.</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <h3>1-on-1 Mentorship</h3>
+                    <p>Connect with experienced mentors who understand your journey and can guide you toward your goals with personalized support and advice.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Educational Resources</h3>
+                    <p>Access curated learning materials, skill-building workshops, and educational opportunities tailored to your interests and career aspirations.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Inspirational Stories</h3>
+                    <p>Read and share stories of success, resilience, and triumph from women who have overcome challenges and achieved their dreams.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe-africa"></i>
+                    </div>
+                    <h3>Community Support</h3>
+                    <p>Join a supportive network of peers, mentors, and advocates working together to create positive change in South Sudan.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Career Development</h3>
+                    <p>Explore career paths, develop professional skills, and access opportunities for internships, jobs, and entrepreneurship.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile-First Design</h3>
+                    <p>Access all features seamlessly on any device, ensuring connectivity regardless of your location or available technology.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="stats" id="community">
+        <div class="container">
+            <h2 class="section-title" style="color: white;">Making an Impact</h2>
+            <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem;">Together, we're building a stronger future for South Sudanese women</p>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>10-28</h3>
+                    <p>Target Age Range</p>
+                </div>
+                <div class="stat-item">
+                    <h3>24/7</h3>
+                    <p>Platform Availability</p>
+                </div>
+                <div class="stat-item">
+                    <h3>100%</h3>
+                    <p>Commitment to Empowerment</p>
+                </div>
+                <div class="stat-item">
+                    <h3>∞</h3>
+                    <p>Potential for Growth</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer class="footer" id="about">
+        <div class="container">
+            <h3>HerRaise Platform</h3>
+            <p>Empowering South Sudanese girls and young women through digital mentorship, community support, and educational opportunities.</p>
+            <p style="margin-top: 1rem; opacity: 0.8;">
+                <i class="fas fa-code"></i> Built with modern web technologies | 
+                <i class="fas fa-shield-alt"></i> Secure & Reliable | 
+                <i class="fas fa-heart"></i> Made with purpose
+            </p>
+            <div style="margin-top: 1rem;">
+                <span style="background: rgba(255,255,255,0.1); padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">
+                    Version: MVP 1.0 | Status: Active Development
+                </span>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Simple smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // API health check and status display
+        async function checkApiStatus() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                console.log('API Status:', data);
+            } catch (error) {
+                console.log('API check failed:', error);
+            }
+        }
+        
+        // Check API status on page load
+        window.addEventListener('load', checkApiStatus);
+    </script>
 </body>
 </html>
