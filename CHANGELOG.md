@@ -50,20 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-###  Major Release - Complete CI/CD with DevSecOps
-
-### Added
-- Manual approval requirement for production deployments
-- Comprehensive monitoring and observability with Application Insights
-- Operational alarms for high response time (>5 seconds)
-- Automated CHANGELOG.md updates on production deployments
-- Environment-specific URLs in GitHub Actions
-- Comprehensive application logging configuration
-
-
-###  Major Release - Complete CI/CD with DevSecOps
-
-
 #### Added
 -  **Professional UI Enhancement** - Modern, responsive design with mentorship focus
 -  **Comprehensive Monitoring** - Application Insights with custom dashboard
