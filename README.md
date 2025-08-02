@@ -7,12 +7,6 @@
 HerRaise is a web-based mentorship platform designed to address the unique challenges faced by girls and young women in South Sudan. This MVP demonstrates professional software development practices including CI/CD, containerization, and Infrastructure as Code.
 
 
-**Live Demo**: [Production Environment](https://herraisehub.azurewebsites.net)
-**Staging Environment**: [Development Preview](https://herraise-app-staging.azurewebsites.net)
-
-
-**Live Demo**: [Production Environment](https://herraisehub.azurewebsites.net)
-**Staging Environment**: [Development Preview](https://herraise-app-staging.azurewebsites.net)
 
 
 
@@ -20,7 +14,6 @@ HerRaise is a web-based mentorship platform designed to address the unique chall
 **Staging Environment**: [Development Preview](https://herraise-app-staging.azurewebsites.net)
 
 
-**Live Demo**: https://herraisehub.azurewebsites.net
 
 
 
@@ -89,7 +82,7 @@ chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 | Environment | URL | Purpose | Auto-Deploy |
 |-------------|-----|---------|-------------|
 | **Production** | [herraisehub.azurewebsites.net](https://herraisehub.azurewebsites.net) | Live platform for users |  `main` branch |
-| **Staging** | [herraise-app-staging.azurewebsites.net](https://herraise-app-staging.azurewebsites.net) | Testing & validation |  `develop` branch |
+| **Staging** | [herraise-app-staging.azurewebsites.net](https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net/) | Testing & validation |  `develop` branch |
 
 ### API Endpoints
 - **Health Check**: `/api/health` - System health and metrics
@@ -156,35 +149,6 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 
 
 
-### Automated Security Scanning
-- ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
-- ✅ **Container Image Security** - Trivy scanning for container vulnerabilities
-- ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
-- ✅ **Infrastructure Security** - Terraform security validation
-
-
-### Security Policies
--  Branch protection on `main` branch with required reviews
--  Mandatory security scans before deployment
--  HTTPS enforcement in all environments
--  Environment variable encryption via Azure Key Vault
--  Automated security reporting and artifact retention
-
-
-
-
-### Security Policies
--  Branch protection on `main` branch with required reviews
--  Mandatory security scans before deployment
--  HTTPS enforcement in all environments
--  Environment variable encryption via Azure Key Vault
--  Automated security reporting and artifact retention
-
-
-
-
-
-
 
 ### Automated Security Scanning
 - ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
@@ -192,12 +156,34 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 - ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
 - ✅ **Infrastructure Security** - Terraform security validation
 
+
+
 ### Security Policies
 -  Branch protection on `main` branch with required reviews
 -  Mandatory security scans before deployment
 -  HTTPS enforcement in all environments
 -  Environment variable encryption via Azure Key Vault
 -  Automated security reporting and artifact retention
+
+
+
+
+
+
+
+
+
+
+
+
+### Automated Security Scanning
+- ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
+- ✅ **Container Image Security** - Trivy scanning for container vulnerabilities
+- ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
+- ✅ **Infrastructure Security** - Terraform security validation
+
+
+
 
 
 
@@ -445,13 +431,8 @@ terraform plan -detailed-exitcode
 terraform validate
 ```
 
-## Vision
-Building a platform that will provide long-term impact by supporting South Sudanese girls through mentorship and community empowerment.
 
-## Live Environments
 
-- **Staging Environment**: https://herraise-app-staging.azurewebsites.net
-- **Production Environment**: https://herraisehub.azurewebsites.net
 
 ## Monitoring Dashboard
 
