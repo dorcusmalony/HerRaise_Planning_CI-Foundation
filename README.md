@@ -10,8 +10,13 @@ HerRaise is a web-based mentorship platform designed to address the unique chall
 
 
 
-**Live Demo**: [Production Environment](https://herraisehub.azurewebsites.net)
-**Staging Environment**: [Development Preview](https://herraise-app-staging.azurewebsites.net)
+
+
+
+
+
+
+
 
 
 
@@ -82,7 +87,11 @@ chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 | Environment | URL | Purpose | Auto-Deploy |
 |-------------|-----|---------|-------------|
 | **Production** | [herraisehub.azurewebsites.net](https://herraisehub.azurewebsites.net) | Live platform for users |  `main` branch |
+
+  
+
 | **Staging** | [herraise-app-staging.azurewebsites.net](https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net/) | Testing & validation |  `develop` branch |
+
 
 ### API Endpoints
 - **Health Check**: `/api/health` - System health and metrics
@@ -150,11 +159,17 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 
 
 
+
+
+
 ### Automated Security Scanning
 - ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
 - ✅ **Container Image Security** - Trivy scanning for container vulnerabilities
 - ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
 - ✅ **Infrastructure Security** - Terraform security validation
+
+
+
 
 
 
@@ -176,11 +191,15 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 
 
 
-### Automated Security Scanning
-- ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
-- ✅ **Container Image Security** - Trivy scanning for container vulnerabilities
-- ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
-- ✅ **Infrastructure Security** - Terraform security validation
+
+
+
+
+
+
+
+
+
 
 
 
@@ -246,24 +265,24 @@ This repository meets all phase one requirements:
 ./scripts/deploy.sh
 ```
 
-### Azure Infrastructure Components
-- **Resource Group**: Organized resource management
-- **Virtual Network**: Custom VNet with secure subnets
-- **ACR**: Azure Container Registry for Docker images
-- **App Service**: Azure App Service with Linux container runtime
-- **PostgreSQL**: Azure Database for PostgreSQL Flexible Server
-- **Networking**: VNet integration for secure communication
 
-## Development Workflow
-1. Create feature branch from develop
-2. Implement feature with tests
-3. Test locally with Docker Compose
-4. Create Pull Request to main
-5. Wait for CI checks and reviewer approval
-6. Merge after all requirements met
 
-## Environment Variables
-Create `.env` file for local development:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```
 NODE_ENV=development
 PORT=3000
