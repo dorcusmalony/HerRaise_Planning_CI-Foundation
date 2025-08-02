@@ -7,20 +7,7 @@
 HerRaise is a web-based mentorship platform designed to address the unique challenges faced by girls and young women in South Sudan. This MVP demonstrates professional software development practices including CI/CD, containerization, and Infrastructure as Code.
 
 
-**Live Demo**: [Production Environment](https://herraisehub.azurewebsites.net)
-**Staging Environment**: [Development Preview](https://herraise-app-staging.azurewebsites.net)
 
-
-**Live Demo**: [Production Environment](https://herraisehub.azurewebsites.net)
-**Staging Environment**: [Development Preview](https://herraise-app-staging.azurewebsites.net)
-
-
-
-**Live Demo**: [Production Environment](https://herraisehub.azurewebsites.net)
-**Staging Environment**: [Development Preview](https://herraise-app-staging.azurewebsites.net)
-
-
-**Live Demo**: https://herraisehub.azurewebsites.net
 
 
 
@@ -89,7 +76,7 @@ chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 | Environment | URL | Purpose | Auto-Deploy |
 |-------------|-----|---------|-------------|
 | **Production** | [herraisehub.azurewebsites.net](https://herraisehub.azurewebsites.net) | Live platform for users |  `main` branch |
-| **Staging** | [herraise-app-staging.azurewebsites.net](https://herraise-app-staging.azurewebsites.net) | Testing & validation |  `develop` branch |
+| **Staging** | [herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net](https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net) | Testing & validation |  `develop` branch |
 
 ### API Endpoints
 - **Health Check**: `/api/health` - System health and metrics
@@ -450,7 +437,7 @@ Building a platform that will provide long-term impact by supporting South Sudan
 
 ## Live Environments
 
-- **Staging Environment**: https://herraise-app-staging.azurewebsites.net
+- **Staging Environment**: https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net
 - **Production Environment**: https://herraisehub.azurewebsites.net
 
 ## Monitoring Dashboard
