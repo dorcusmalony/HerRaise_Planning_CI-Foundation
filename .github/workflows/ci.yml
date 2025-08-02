@@ -34,7 +34,6 @@ jobs:
           echo " Starting build process..."
           npm run build:production
           echo " Build completed successfully"
-
       - name: Validate build output
         run: |
           echo "🔍 Validating build output..."
@@ -42,7 +41,6 @@ jobs:
           test -d dist/frontend || (echo "❌ Frontend files missing" && exit 1)
           test -f dist/package.json || (echo "❌ Package.json missing" && exit 1)
           echo "✅ Build validation passed"
-
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -117,7 +115,7 @@ jobs:
           if npm audit --audit-level=critical --quiet 2>/dev/null; then
             echo "✅ No critical vulnerabilities found" >> security-reports/summary.txt
           else
-            echo "⚠️ Critical vulnerabilities detected:" >> security-reports/summary.txt
+            echo "⚠ Critical vulnerabilities detected:" >> security-reports/summary.txt
             npm audit --audit-level=critical 2>/dev/null | head -20 >> security-reports/summary.txt || true
           fi
           
@@ -125,18 +123,16 @@ jobs:
           if npm audit --audit-level=high --quiet 2>/dev/null; then
             echo "✅ No high severity vulnerabilities found" >> security-reports/summary.txt
           else
-            echo "⚠️ High severity vulnerabilities detected:" >> security-reports/summary.txt
+            echo "⚠ High severity vulnerabilities detected:" >> security-reports/summary.txt
             npm audit --audit-level=high 2>/dev/null | head -20 >> security-reports/summary.txt || true
           fi
           
           echo "✅ Dependency vulnerability scanning completed"
-
       - name: Automated Vulnerability Remediation
         run: |
           echo "🔧 Attempting automated vulnerability fixes..."
           npm audit fix --force 2>/dev/null || echo "Some vulnerabilities require manual intervention"
           echo "✅ Auto-remediation attempt completed"
-
       - name: SAST (Static Application Security Testing)
         uses: aquasecurity/trivy-action@master
         with:
@@ -152,10 +148,10 @@ jobs:
           cat > security-reports/security-dashboard.md << EOF
           # HerRaise Security Scan Report
           
-          **Scan Date:** $(date)
-          **Pipeline:** ${GITHUB_WORKFLOW}
-          **Commit:** ${GITHUB_SHA}
-          **Branch:** ${GITHUB_REF_NAME}
+          *Scan Date:* $(date)
+          *Pipeline:* ${GITHUB_WORKFLOW}
+          *Commit:* ${GITHUB_SHA}
+          *Branch:* ${GITHUB_REF_NAME}
           
           ## Vulnerability Summary
           $(cat security-reports/summary.txt)
@@ -173,7 +169,6 @@ jobs:
           EOF
           
           echo "✅ Security documentation generated"
-
       - name: Upload Security Artifacts
         uses: actions/upload-artifact@v4
         if: always()
@@ -214,7 +209,6 @@ jobs:
             echo "✅ Azure credentials found"
             echo "SKIP_AZURE_PUSH=false" >> $GITHUB_ENV
           fi
-
       - name: Azure Login (conditional)
         if: env.SKIP_AZURE_PUSH == 'false'
         uses: azure/login@v1
@@ -225,12 +219,10 @@ jobs:
         if: env.SKIP_AZURE_PUSH == 'false'
         run: |
           az acr login --name ${{ env.ACR_NAME }}
-
       - name: Build Docker image
         run: |
           docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
           echo "✅ Docker image built successfully"
-
       - name: Container Image Security Scanning
         uses: aquasecurity/trivy-action@master
         with:
@@ -244,13 +236,11 @@ jobs:
           echo "🔍 Container Security Scan Summary:"
           trivy image --format table ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} || true
           echo "✅ Container security scan completed"
-
       - name: Push Docker image (conditional)
         if: env.SKIP_AZURE_PUSH == 'false'
         run: |
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
           echo "✅ Image pushed to registry successfully"
-
       - name: Docker build summary
         run: |
           if [ "$SKIP_AZURE_PUSH" == "true" ]; then
@@ -259,7 +249,6 @@ jobs:
           else
             echo "✅ Docker image built and pushed to Azure Container Registry"
           fi
-
   deploy-staging:
     name: Automated Staging Deployment
     runs-on: ubuntu-latest
@@ -275,7 +264,6 @@ jobs:
             exit 1
           fi
           echo "✅ Prerequisites validated"
-
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -293,7 +281,6 @@ jobs:
           
           echo "✅ Staging deployment completed"
           echo "🌐 Staging URL: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net"
-
       - name: Post-Deployment Health Check
         run: |
           echo "🏥 Running post-deployment health checks..."
@@ -303,9 +290,8 @@ jobs:
           if curl -f -s https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net/api/health > /dev/null; then
             echo "✅ Staging deployment health check passed"
           else
-            echo "⚠️ Health check failed - manual verification required"
+            echo "⚠ Health check failed - manual verification required"
           fi
-
   deploy-production:
     name: Automated Production Deployment
     runs-on: ubuntu-latest
@@ -321,7 +307,6 @@ jobs:
             exit 1
           fi
           echo "✅ Prerequisites validated"
-
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -341,7 +326,6 @@ jobs:
           echo "🌐 Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
           echo "📅 Deployed at: $(date)"
           echo "🔖 Commit: ${{ github.sha }}"
-
       - name: Production Deployment Validation
         run: |
           echo "🔍 Validating production deployment..."
@@ -363,7 +347,6 @@ jobs:
           echo "- Commit: ${{ github.sha }}"
           echo "- Deployed at: $(date)"
           echo "- Pipeline: ${{ github.run_number }}"
-
   security-compliance:
     name: Security Compliance Report
     runs-on: ubuntu-latest
@@ -373,7 +356,7 @@ jobs:
       - name: Download Security Artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: '*security*'
+          pattern: 'security'
           merge-multiple: true
 
       - name: Generate Compliance Report
@@ -382,9 +365,9 @@ jobs:
           cat > compliance-report.md << EOF
           # HerRaise Production Security Compliance Report
           
-          **Production Deployment:** ${GITHUB_SHA}
-          **Date:** $(date)
-          **Pipeline:** ${GITHUB_RUN_NUMBER}
+          *Production Deployment:* ${GITHUB_SHA}
+          *Date:* $(date)
+          *Pipeline:* ${GITHUB_RUN_NUMBER}
           
           ## Security Scans Completed
           - ✅ Dependency vulnerability scanning
@@ -398,7 +381,6 @@ jobs:
           ## Production URL
           🌐 https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net
           EOF
-
       - name: Upload Compliance Report
         uses: actions/upload-artifact@v4
         with:
