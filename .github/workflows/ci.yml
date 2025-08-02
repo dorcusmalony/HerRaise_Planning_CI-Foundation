@@ -222,7 +222,7 @@ jobs:
           {
             echo "## [$(date +%Y.%m.%d)] - $(date +%Y-%m-%d)"
             echo ""
-            echo "### 🚀 Deployed"
+            echo "###  Deployed"
             echo "- Production deployment of commit ${GITHUB_SHA:0:7}"
             echo "- Automated deployment via CI/CD pipeline"
             echo "- Monitoring and observability configured"
