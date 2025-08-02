@@ -247,6 +247,24 @@ jobs:
           git add CHANGELOG.md
           git commit -m "chore: update CHANGELOG for deployment ${GITHUB_SHA:0:7}" || exit 0
           git push || exit 0
+      - name: Production Deployment Validation
+        run: |
+          echo "Validating production deployment..."
+          # Wait for deployment to stabilize
+          sleep 45
+          # Production health check
+          if curl -f -s https://herraisehub.azurewebsites.net/api/health > /dev/null; then
+            echo "Production deployment successful and healthy"
+            echo "Live production URL: https://herraisehub.azurewebsites.net"
+          else
+            echo "Production health check failed"
+            exit 1
+          fi
+          # Log deployment success
+          echo "Deployment Metrics:"
+          echo "- Commit: ${GITHUB_SHA}"
+          echo "- Deployed at: $(date)"
+          echo "- Pipeline: ${GITHUB_RUN_NUMBER}"
   monitoring:
     name: Setup Monitoring & Alerts
     runs-on: ubuntu-latest
