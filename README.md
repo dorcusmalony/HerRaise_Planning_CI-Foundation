@@ -6,8 +6,22 @@
 
 HerRaise is a web-based mentorship platform designed to address the unique challenges faced by girls and young women in South Sudan. This MVP demonstrates professional software development practices including CI/CD, containerization, and Infrastructure as Code.
 
-**Live Demo**: [Production Environment](https://herraisehub.azurewebsites.net)
-**Staging Environment**: [Development Preview](https://herraise-app-staging.azurewebsites.net)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Target Impact
 
@@ -73,7 +87,11 @@ chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 | Environment | URL | Purpose | Auto-Deploy |
 |-------------|-----|---------|-------------|
 | **Production** | [herraisehub.azurewebsites.net](https://herraisehub.azurewebsites.net) | Live platform for users |  `main` branch |
-| **Staging** | [herraise-app-staging.azurewebsites.net](https://herraise-app-staging.azurewebsites.net) | Testing & validation |  `develop` branch |
+
+  
+
+| **Staging** | [herraise-app-staging.azurewebsites.net](https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net/) | Testing & validation |  `develop` branch |
+
 
 ### API Endpoints
 - **Health Check**: `/api/health` - System health and metrics
@@ -137,11 +155,23 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 
 ##  Security & DevSecOps
 
+
+
+
+
+
+
+
 ### Automated Security Scanning
 - ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
 - ✅ **Container Image Security** - Trivy scanning for container vulnerabilities
 - ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
 - ✅ **Infrastructure Security** - Terraform security validation
+
+
+
+
+
 
 ### Security Policies
 -  Branch protection on `main` branch with required reviews
@@ -149,6 +179,32 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 -  HTTPS enforcement in all environments
 -  Environment variable encryption via Azure Key Vault
 -  Automated security reporting and artifact retention
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ##  Monitoring & Observability
 
@@ -209,24 +265,24 @@ This repository meets all phase one requirements:
 ./scripts/deploy.sh
 ```
 
-### Azure Infrastructure Components
-- **Resource Group**: Organized resource management
-- **Virtual Network**: Custom VNet with secure subnets
-- **ACR**: Azure Container Registry for Docker images
-- **App Service**: Azure App Service with Linux container runtime
-- **PostgreSQL**: Azure Database for PostgreSQL Flexible Server
-- **Networking**: VNet integration for secure communication
 
-## Development Workflow
-1. Create feature branch from develop
-2. Implement feature with tests
-3. Test locally with Docker Compose
-4. Create Pull Request to main
-5. Wait for CI checks and reviewer approval
-6. Merge after all requirements met
 
-## Environment Variables
-Create `.env` file for local development:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```
 NODE_ENV=development
 PORT=3000
@@ -277,7 +333,7 @@ git push origin test-pipeline-fix
 # 3. Monitor GitHub Actions tab for pipeline execution
 # 4. Verify all checks show green checkmarks
 # 5. Test merge capability
-```
+
 
 ### What to Watch For
 -  **Linting**: ESLint checks pass without errors
@@ -394,8 +450,18 @@ terraform plan -detailed-exitcode
 terraform validate
 ```
 
-## Vision
-Building a platform that will provide long-term impact by supporting South Sudanese girls through mentorship and community empowerment.
+
+
+
+## Monitoring Dashboard
+
+- **Application Insights**: [Azure Portal - HerRaise Monitoring](https://portal.azure.com/#@/resource/subscriptions/{subscription-id}/resourceGroups/HerRaise_RG/providers/microsoft.insights/components/herraise-insights/overview)
+- **Operational Alarms**: Configured for response time > 5 seconds
+
+
+
+
+
 
 
 
