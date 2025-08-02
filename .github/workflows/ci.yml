@@ -115,7 +115,7 @@ jobs:
           if npm audit --audit-level=critical --quiet 2>/dev/null; then
             echo "✅ No critical vulnerabilities found" >> security-reports/summary.txt
           else
-            echo "⚠️ Critical vulnerabilities detected:" >> security-reports/summary.txt
+            echo "⚠ Critical vulnerabilities detected:" >> security-reports/summary.txt
             npm audit --audit-level=critical 2>/dev/null | head -20 >> security-reports/summary.txt || true
           fi
           
@@ -123,7 +123,7 @@ jobs:
           if npm audit --audit-level=high --quiet 2>/dev/null; then
             echo "✅ No high severity vulnerabilities found" >> security-reports/summary.txt
           else
-            echo "⚠️ High severity vulnerabilities detected:" >> security-reports/summary.txt
+            echo "⚠ High severity vulnerabilities detected:" >> security-reports/summary.txt
             npm audit --audit-level=high 2>/dev/null | head -20 >> security-reports/summary.txt || true
           fi
           
@@ -148,10 +148,10 @@ jobs:
           cat > security-reports/security-dashboard.md << EOF
           # HerRaise Security Scan Report
           
-          **Scan Date:** $(date)
-          **Pipeline:** ${GITHUB_WORKFLOW}
-          **Commit:** ${GITHUB_SHA}
-          **Branch:** ${GITHUB_REF_NAME}
+          *Scan Date:* $(date)
+          *Pipeline:* ${GITHUB_WORKFLOW}
+          *Commit:* ${GITHUB_SHA}
+          *Branch:* ${GITHUB_REF_NAME}
           
           ## Vulnerability Summary
           $(cat security-reports/summary.txt)
@@ -290,7 +290,7 @@ jobs:
           if curl -f -s https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net/api/health > /dev/null; then
             echo "✅ Staging deployment health check passed"
           else
-            echo "⚠️ Health check failed - manual verification required"
+            echo "⚠ Health check failed - manual verification required"
           fi
   deploy-production:
     name: Automated Production Deployment
@@ -356,7 +356,7 @@ jobs:
       - name: Download Security Artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: '*security*'
+          pattern: 'security'
           merge-multiple: true
 
       - name: Generate Compliance Report
@@ -365,9 +365,9 @@ jobs:
           cat > compliance-report.md << EOF
           # HerRaise Production Security Compliance Report
           
-          **Production Deployment:** ${GITHUB_SHA}
-          **Date:** $(date)
-          **Pipeline:** ${GITHUB_RUN_NUMBER}
+          *Production Deployment:* ${GITHUB_SHA}
+          *Date:* $(date)
+          *Pipeline:* ${GITHUB_RUN_NUMBER}
           
           ## Security Scans Completed
           - ✅ Dependency vulnerability scanning
