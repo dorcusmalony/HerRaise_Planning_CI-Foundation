@@ -171,10 +171,10 @@ process.on('SIGINT', () => {
 // Start server
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`[${new Date().toISOString()}] 🚀 HerRaise server running on port ${PORT}`);
-    console.log(`[${new Date().toISOString()}] 🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`[${new Date().toISOString()}] 📊 Health check: http://localhost:${PORT}/api/health`);
-    console.log(`[${new Date().toISOString()}] 🎯 Ready to empower South Sudanese girls!`);
+    console.log(`[${new Date().toISOString()}] HerRaise server running on port ${PORT}`);
+    console.log(`[${new Date().toISOString()}] Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`[${new Date().toISOString()}] Health check: http://localhost:${PORT}/api/health`);
+    console.log(`[${new Date().toISOString()}] Ready to empower South Sudanese girls!`);
   });
 }
 
