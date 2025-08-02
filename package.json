@@ -41,5 +41,6 @@
       "backend/**/*.js",
       "!backend/server.js"
     ]
-}
+  },
+  "type": "module"
 }
