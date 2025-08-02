@@ -138,28 +138,20 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 | **PostgreSQL** | Database service | Azure Database for PostgreSQL Flexible Server |
 | **Resource Group** | Resource management | Azure Resource Group |
 
-##  Security & DevSecOps
-
-
-
+## Security & DevSecOps
 
 ### Automated Security Scanning
-- ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
-- ✅ **Container Image Security** - Trivy scanning for container vulnerabilities
-- ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
-- ✅ **Infrastructure Security** - Terraform security validation
-
+- ✅ **Dependency Vulnerability Scanning**: npm audit with critical/high severity detection
+- ✅ **Container Image Security**: Trivy scanning for container vulnerabilities
+- ✅ **Static Application Security Testing (SAST)**: Code vulnerability analysis
+- ✅ **Infrastructure Security**: Terraform security validation
 
 ### Security Policies
--  Branch protection on `main` branch with required reviews
--  Mandatory security scans before deployment
--  HTTPS enforcement in all environments
--  Environment variable encryption via Azure Key Vault
--  Automated security reporting and artifact retention
-
-
-
-
+- Branch protection on `main` branch with required reviews
+- Mandatory security scans before deployment
+- HTTPS enforcement in all environments
+- Environment variable encryption via Azure Key Vault
+- Automated security reporting and artifact retention
 ### Security Policies
 -  Branch protection on `main` branch with required reviews
 -  Mandatory security scans before deployment
