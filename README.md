@@ -90,7 +90,7 @@ chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 
   
 
-| **Staging** | [herraise-app-staging.azurewebsites.net](https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net/) | Testing & validation |  `develop` branch |
+| **Staging** | [herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net](https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net/) | Testing & validation |  `develop` branch |
 
 
 ### API Endpoints
