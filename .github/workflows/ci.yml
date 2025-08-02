@@ -1214,16 +1214,11 @@ jobs:
 
       - name: Deployment Success Notification
         run: |
-
-        
-          az webapp config container set \
-            --name ${{ env.AZURE_WEBAPP_NAME_PROD }} \
-            --resource-group HerRaise_RG \
-            --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
-          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_PROD }} --resource-group HerRaise_RG
-          echo "Production deployment completed"
-
+          echo "Sending deployment success notification to Slack..."
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"✅ Production deployment completed successfully for commit '${GITHUB_SHA:0:7}' by '${GITHUB_ACTOR}'. Live URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"}' \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
+          echo "Notification sent."
       - name: Update CHANGELOG
         run: |
           echo "Updating CHANGELOG with deployment details..."
