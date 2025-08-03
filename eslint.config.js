@@ -1,24 +1,10 @@
 export default [
   {
-    files: ['**/*.js'],
+    files: ['frontend/**/*.js'],
     languageOptions: {
       ecmaVersion: 2021,
       sourceType: 'module',
-      globals: {
-        // Node.js globals
-        process: 'readonly',
-        __dirname: 'readonly',
-        module: 'readonly',
-        require: 'readonly',
-        // Jest globals
-        describe: 'readonly',
-        test: 'readonly',
-        expect: 'readonly',
-        beforeAll: 'readonly',
-        afterAll: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-      },
+      globals: {},
     },
     linterOptions: {
       reportUnusedDisableDirectives: true,

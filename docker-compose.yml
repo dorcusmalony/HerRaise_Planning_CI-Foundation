@@ -1,19 +1,19 @@
 version: '3.8'
 
 services:
-  app:
-    build:
-      context: .
-      target: development
-    container_name: herraise-app
+  nginx:
+    image: nginx:alpine
+    container_name: herraise-nginx
     ports:
-      - "3000:3000"
+      - "8080:80"
     volumes:
-      - .:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-      - PORT=3000
+      - ./dist/frontend:/usr/share/nginx/html:ro
+    networks:
+      - herraise-network
+
+networks:
+  herraise-network:
+    driver: bridge
     depends_on:
       - postgres
     networks:
@@ -36,7 +36,3 @@ services:
 
 volumes:
   postgres_data:
-
-networks:
-  herraise-network:
-    driver: bridge

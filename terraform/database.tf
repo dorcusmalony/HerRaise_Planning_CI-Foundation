@@ -1,4 +1,4 @@
-# Azure Database for PostgreSQL
+# DELETE THIS FILE - No backend, no database needed.
 resource "azurerm_postgresql_flexible_server" "main" {
   name                   = "${var.project_name}-db"
   resource_group_name    = azurerm_resource_group.main.name

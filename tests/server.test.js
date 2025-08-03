@@ -1,4 +1,4 @@
-const request = require('supertest');
+// DELETE THIS FILE - No backend, no API tests needed.
 const app = require('../backend/server');
 
 describe('HerRaise API', () => {

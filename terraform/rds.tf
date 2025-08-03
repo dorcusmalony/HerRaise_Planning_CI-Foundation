@@ -1,4 +1,4 @@
-# DB Subnet Group
+# DELETE THIS FILE - No backend, no database needed.
 resource "aws_db_subnet_group" "main" {
   name       = "${var.project_name}-db-subnet-group"
   subnet_ids = aws_subnet.private[*].id
