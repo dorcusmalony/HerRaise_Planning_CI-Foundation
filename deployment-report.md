@@ -6,9 +6,7 @@
 - **Pipeline**: Fully Automated CI/CD with DevSecOps
 - **Monitoring**: Comprehensive Observability Configured
 
-##  Live URLs
-- **Production**: https://herraisehub.azurewebsites.net
-- **Staging**: https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net
+
 
 ##  Assignment Requirements Compliance
 
