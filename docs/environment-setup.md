@@ -17,6 +17,25 @@ To enable manual approval for production deployments, you need to configure GitH
 #### Required Reviewers
 - Add at least 1 required reviewer
 - Select team members who should approve production deployments
+# GitHub Environment Setup for Manual Approval
+
+## Required GitHub Environment Configuration
+
+To enable manual approval for production deployments, you need to configure GitHub environments:
+
+### 1. Create Production Environment
+
+1. Go to your repository on GitHub
+2. Navigate to **Settings** → **Environments**
+3. Click **New environment**
+4. Name it `production`
+5. Configure the following protection rules:
+
+### 2. Protection Rules Configuration
+
+#### Required Reviewers
+- Add at least 1 required reviewer
+- Select team members who should approve production deployments
 - Enable "Prevent self-review" if desired
 
 #### Deployment Branches
