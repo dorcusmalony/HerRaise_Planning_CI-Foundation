@@ -7,11 +7,6 @@
 HerRaise is a web-based mentorship platform designed to address the unique challenges faced by girls and young women in South Sudan. This MVP demonstrates professional software development practices including CI/CD, containerization, and Infrastructure as Code.
 
 
-
-
-
-
-
 ## Target Impact
 
 - **Primary Users**: South Sudanese girls aged 10-28 seeking mentorship and educational resources
@@ -40,19 +35,8 @@ Azure App Service → Container Registry → Azure Database
 | **Infrastructure** | Terraform (Azure) |
 | **CI/CD** | GitHub Actions |
 
-## Quick Start
 
-### Development Environment
 
-```bash
-# Clone and start with Docker
-git clone <repository-url>
-cd HerRaise_Planning_CI-Foundation
-docker-compose up -d
-
-# Access application
-open http://localhost:3000
-```
 
 ### Production Deployment
 
@@ -78,12 +62,6 @@ chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 | **Production** | [herraisehub.azurewebsites.net](https://herraisehub.azurewebsites.net) | Live platform for users |  `main` branch |
 | **Staging** | [herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net](https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net) | Testing & validation |  `develop` branch |
 
-### API Endpoints
-- **Health Check**: `/api/health` - System health and metrics
-- **API Info**: `/api` - Service information and status
-- **Mentorship**: `/api/mentorship` - Mentorship program data
-- **Community**: `/api/community` - Community engagement stats
-- **System Status**: `/api/status` - Detailed system monitoring
 
 ## Repository Structure
 
@@ -138,29 +116,7 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 | **PostgreSQL** | Database service | Azure Database for PostgreSQL Flexible Server |
 | **Resource Group** | Resource management | Azure Resource Group |
 
-## Security & DevSecOps
-
-### Automated Security Scanning
-- ✅ **Dependency Vulnerability Scanning**: npm audit with critical/high severity detection
-- ✅ **Container Image Security**: Trivy scanning for container vulnerabilities
-- ✅ **Static Application Security Testing (SAST)**: Code vulnerability analysis
-- ✅ **Infrastructure Security**: Terraform security validation
-
-### Security Policies
-- Branch protection on `main` branch with required reviews
-- Mandatory security scans before deployment
-- HTTPS enforcement in all environments
-- Environment variable encryption via Azure Key Vault
-- Automated security reporting and artifact retention
-### Security Policies
--  Branch protection on `main` branch with required reviews
--  Mandatory security scans before deployment
--  HTTPS enforcement in all environments
--  Environment variable encryption via Azure Key Vault
--  Automated security reporting and artifact retention
-
-
-
+##  Security & DevSecOps
 
 
 
@@ -171,12 +127,21 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 - ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
 - ✅ **Infrastructure Security** - Terraform security validation
 
+
 ### Security Policies
 -  Branch protection on `main` branch with required reviews
 -  Mandatory security scans before deployment
 -  HTTPS enforcement in all environments
 -  Environment variable encryption via Azure Key Vault
 -  Automated security reporting and artifact retention
+
+
+
+
+
+
+
+
 
 
 
@@ -229,54 +194,21 @@ This repository meets all phase one requirements:
 
 ---
 
-**Vision**: Building sustainable pathways for South Sudanese girls to overcome barriers and achieve their full potential through technology-enabled mentorship and community support.
-
-
-**License**: MIT | **Team**: HerRaise Development Team
 
 
 **License**: MIT | **Team**: HerRaise Development Team
 ./scripts/deploy.sh
 ```
 
-### Azure Infrastructure Components
-- **Resource Group**: Organized resource management
-- **Virtual Network**: Custom VNet with secure subnets
-- **ACR**: Azure Container Registry for Docker images
-- **App Service**: Azure App Service with Linux container runtime
-- **PostgreSQL**: Azure Database for PostgreSQL Flexible Server
-- **Networking**: VNet integration for secure communication
 
-## Development Workflow
-1. Create feature branch from develop
-2. Implement feature with tests
-3. Test locally with Docker Compose
-4. Create Pull Request to main
-5. Wait for CI checks and reviewer approval
-6. Merge after all requirements met
 
-## Environment Variables
-Create `.env` file for local development:
-```
-NODE_ENV=development
-PORT=3000
-DATABASE_URL=postgresql://herraise_user:herraise_password@localhost:5432/herraise_db
 
 # Azure-specific variables (set via Terraform in production)
-AZURE_RESOURCE_GROUP=herraise-rg
+AZURE_RESOURCE_GROUP=herraise-RG
 AZURE_CONTAINER_REGISTRY=herraiseacr.azurecr.io
 ```
 
-##  CI/CD Pipeline
 
-### Pipeline Stages
-1. **Build** - Application compilation and artifact creation
-2. **Test** - Automated testing suite execution
-3. **Security** - Comprehensive vulnerability scanning
-4. **Docker** - Container build and registry push
-5. **Deploy** - Automated deployment to environments
-6. **Monitor** - Observability and alerting setup
-7. **Validate** - Post-deployment health verification
 
 ### Deployment Strategy
 - **Staging**: Auto-deploy on `develop` branch push
@@ -317,12 +249,7 @@ git push origin test-pipeline-fix
 -  **Security**: Vulnerability scans complete (may have warnings)
 -  **Merge**: "Merge pull request" button becomes enabled
 
-### If Pipeline Fails Again
-```bash
-# Check specific workflow logs in GitHub Actions
-# Fix any remaining issues
-# Push new commit to same branch
-# Pipeline will re-run automatically
+
 ```
 
 ### Managing Failed Pull Requests
@@ -338,36 +265,25 @@ git push origin <failed-branch-name>
 # Pipeline automatically re-runs on the same PR
 ```
 
-**Option 2: Create Fresh Test PR**
-```bash
-# Create new test branch from main
-git checkout main
-git pull origin main
-git checkout -b test-pipeline-validation-v2
-# Make a small change (like updating this README)
-git add .
-git commit -m "test: validate CI pipeline after fixes"
-git push origin test-pipeline-validation-v2
-# Create new PR via GitHub UI
-```
+
 
 **Recommendation**: Reuse your failed PR by pushing new commits to fix the issues. This maintains the history and shows the progression from failure to success.
 
 ## Next Testing Steps
 
 ### Phase 1 Validation Checklist
-- [ ] **CI Pipeline Test**: Create test PR to verify all GitHub Actions workflows
-- [ ] **Local Docker Test**: Ensure `docker-compose up -d` works completely
-- [ ] **Database Connectivity**: Validate PostgreSQL connection and schema
-- [ ] **API Health Check**: Test `/api/health` endpoint functionality
-- [ ] **Frontend Integration**: Verify frontend serves and connects to backend
+-  **CI Pipeline Test**: Create test PR to verify all GitHub Actions workflows
+-  **Local Docker Test**: Ensure `docker-compose up -d` works completely
+-  **Database Connectivity**: Validate PostgreSQL connection and schema
+-  **API Health Check**: Test `/api/health` endpoint functionality
+-  **Frontend Integration**: Verify frontend serves and connects to backend
 
 ### Phase 2 Preparation Tests
-- [ ] **Terraform Validation**: Run `terraform plan` to verify infrastructure code
-- [ ] **Container Registry**: Test Azure ACR authentication and push
-- [ ] **Azure App Service**: Validate container deployment capability
-- [ ] **Network Security**: Test VNet integration and subnet isolation
-- [ ] **Database Migration**: Verify PostgreSQL schema deployment
+-  **Terraform Validation**: Run `terraform plan` to verify infrastructure code
+-  **Container Registry**: Test Azure ACR authentication and push
+-  **Azure App Service**: Validate container deployment capability
+-  **Network Security**: Test VNet integration and subnet isolation
+-  **Database Migration**: Verify PostgreSQL schema deployment
 
 ### Testing Commands
 
@@ -386,10 +302,7 @@ terraform plan
 docker build -t herraise:test .
 docker run -p 3000:3000 herraise:test
 
-# Security audit
-npm audit
-docker scan herraise:test (if available)
-```
+
 
 ### Expected Outcomes
 | Test | Success Criteria |
@@ -400,7 +313,7 @@ docker scan herraise:test (if available)
 | **Terraform** | Plan executes without errors |
 | **Container** | Image builds and runs successfully |
 
-## Troubleshooting Common Issues
+
 
 ### Docker Compose Issues
 ```bash
@@ -424,13 +337,8 @@ terraform plan -detailed-exitcode
 terraform validate
 ```
 
-## Vision
-Building a platform that will provide long-term impact by supporting South Sudanese girls through mentorship and community empowerment.
 
-## Live Environments
 
-- **Staging Environment**: https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net
-- **Production Environment**: https://herraisehub.azurewebsites.net
 
 ## Monitoring Dashboard
 
