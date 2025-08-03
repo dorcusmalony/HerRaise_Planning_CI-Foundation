@@ -387,18 +387,18 @@
         });
         
         // API health check and status display
-        async function checkApiStatus() {
-            try {
-                const response = await fetch('/api/health');
-                const data = await response.json();
-                console.log('API Status:', data);
-            } catch (error) {
-                console.log('API check failed:', error);
-            }
-        }
+        // async function checkApiStatus() {
+        //     try {
+        //         const response = await fetch('/api/health');
+        //         const data = await response.json();
+        //         console.log('API Status:', data);
+        //     } catch (error) {
+        //         console.log('API check failed:', error);
+        //     }
+        // }
         
         // Check API status on page load
-        window.addEventListener('load', checkApiStatus);
+        // window.addEventListener('load', checkApiStatus);
     </script>
 </body>
 </html>
