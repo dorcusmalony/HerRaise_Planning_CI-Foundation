@@ -28,7 +28,7 @@
 - ✅ Conventional commit standards documented
 - ✅ Clear version history maintained
 
-## 🔧 MANUAL SETUP REQUIRED
+##  MANUAL SETUP REQUIRED
 
 ### GitHub Environment Configuration
 **CRITICAL**: You must manually configure GitHub environments for the assignment to work:
@@ -47,7 +47,7 @@
 ### Azure Credentials Setup
 Ensure `AZURE_CREDENTIALS` secret is configured in GitHub repository secrets.
 
-## 📋 SUBMISSION REQUIREMENTS
+##  SUBMISSION REQUIREMENTS
 
 ### Repository Deliverables ✅
 - ✅ Complete application source code
@@ -97,7 +97,7 @@ Your 10-minute video should follow this EXACT sequence:
 - [ ] Show updated CHANGELOG.md entry for deployed change
 - [ ] Conclude with summary of successful automated deployment
 
-## 🚀 TESTING YOUR PIPELINE
+##  TESTING YOUR PIPELINE
 
 ### Before Recording Video:
 1. **Test the complete flow**:
@@ -127,13 +127,13 @@ Your 10-minute video should follow this EXACT sequence:
 - ✅ Monitoring dashboard shows data
 - ✅ CHANGELOG.md gets updated automatically
 
-## 📊 MONITORING DASHBOARD ACCESS
+##  MONITORING DASHBOARD ACCESS
 
 After deployment, access your monitoring dashboard:
 - **Application Insights**: Azure Portal → Resource Groups → HerRaise_RG → herraise-insights
 - **Operational Alarms**: Azure Portal → Monitor → Alerts
 
-## 🎯 FINAL CHECKLIST BEFORE SUBMISSION
+##  FINAL CHECKLIST BEFORE SUBMISSION
 
 - [ ] GitHub environments configured with manual approval
 - [ ] Azure credentials working in pipeline
@@ -145,9 +145,9 @@ After deployment, access your monitoring dashboard:
 - [ ] Video follows exact sequence outlined above
 - [ ] All pipeline stages working end-to-end
 
-## 🏆 ASSIGNMENT COMPLETION STATUS
+##  ASSIGNMENT COMPLETION STATUS
 
-**Overall Status**: ✅ **READY FOR SUBMISSION**
+**Overall Status**:  **READY FOR SUBMISSION**
 
 All technical requirements have been implemented. You only need to:
 1. Configure GitHub environments manually
