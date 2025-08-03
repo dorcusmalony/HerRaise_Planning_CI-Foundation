@@ -20,6 +20,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Check for Dockerfile and docker-compose.yml
+        run: |
+          if [ ! -f Dockerfile ]; then
+            echo "❌ Dockerfile missing. Please add a Dockerfile to the project root."
+            exit 1
+          fi
+          if [ ! -f docker-compose.yml ]; then
+            echo "❌ docker-compose.yml missing. Please add a docker-compose.yml to the project root."
+            exit 1
+          fi
+          echo "✅ Dockerfile and docker-compose.yml found."
+
+      - name: Check for Terraform scripts
+        run: |
+          if ! ls *.tf 1> /dev/null 2>&1; then
+            echo "❌ Terraform scripts (*.tf) missing. Please add Terraform configuration files."
+            exit 1
+          fi
+          echo "✅ Terraform scripts found."
+
       - name: Build frontend (static files)
         run: |
           echo "Building static frontend files..."
@@ -102,137 +122,102 @@ jobs:
           name: build-files
           path: frontend/
 
-      - name: Check Azure credentials
-        run: |
-          if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
-            echo " AZURE_CREDENTIALS secret not configured"
-            echo " To set up Azure authentication:"
-            echo "   1. Create Azure Service Principal:"
-            echo "      az ad sp create-for-rbac --name 'GitHub-Actions-HerRaise' --role contributor --scopes /subscriptions/{subscription-id} --sdk-auth"
-            echo "   2. Copy the JSON output"
-            echo "   3. Add it as GitHub Secret named 'AZURE_CREDENTIALS'"
-            echo "   4. Re-run the pipeline"
-            echo ""
-            echo " For now, simulating Docker build without Azure push..."
-            echo "SKIP_AZURE_PUSH=true" >> $GITHUB_ENV
-          else
-            echo " Azure credentials found"
-            echo "SKIP_AZURE_PUSH=false" >> $GITHUB_ENV
-          fi
-      - name: Azure Login (conditional)
-        if: env.SKIP_AZURE_PUSH == 'false'
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Log in to Azure Container Registry (conditional)
-        if: env.SKIP_AZURE_PUSH == 'false'
-        run: |
-          az acr login --name ${{ env.ACR_NAME }}
       - name: Build Docker image
         run: |
           docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
           echo "✅ Docker image built successfully"
-      - name: Container Image Security Scanning
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          format: 'sarif'
-          output: 'container-security-report.sarif'
-          exit-code: '0'
+      - name: Manual Deployment Instructions
+        run: |
+          echo "======================================================"
+          echo " Manual Deployment Steps:"
+          echo " 1. Ensure your infrastructure is provisioned with Terraform."
+          echo " 2. Log in to Azure Container Registry (ACR):"
+          echo "      az acr login --name ${{ env.ACR_NAME }}"
+          echo " 3. Push your Docker image:"
+          echo "      docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          echo " 4. Deploy your container manually via Azure Portal or CLI:"
+          echo "      az webapp config container set --name <your-app-name> --resource-group <your-rg> --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io"
+          echo " 5. Restart your web app:"
+          echo "      az webapp restart --name <your-app-name> --resource-group <your-rg>"
+          echo " 6. Access your app at: https://<your-app-name>.azurewebsites.net"
+          echo "======================================================"
+          echo " Automated deployment is currently disabled. Please deploy manually as above."
 
-      - name: Container Vulnerability Summary
-        run: |
-          echo "🔍 Container Security Scan Summary:"
-          trivy image --format table ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} || true
-          echo " Container security scan completed"
-      - name: Push Docker image (conditional)
-        if: env.SKIP_AZURE_PUSH == 'false'
-        run: |
-          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          echo " Image pushed to registry successfully"
-      - name: Docker build summary
-        run: |
-          if [ "$SKIP_AZURE_PUSH" == "true" ]; then
-            echo " Docker image built locally (Azure push skipped - credentials not configured)"
-            echo " To enable Azure deployment, configure AZURE_CREDENTIALS secret"
-          else
-            echo " Docker image built and pushed to Azure Container Registry"
-          fi
-  deploy-staging:
-    name: Automated Staging Deployment
-    runs-on: ubuntu-latest
-    needs: docker
-    if: github.ref == 'refs/heads/develop'
-    environment: staging
-    steps:
-      - name: Check deployment prerequisites
-        run: |
-          if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
-            echo " Cannot deploy - Azure credentials not configured"
-            echo " Set up AZURE_CREDENTIALS secret to enable deployment"
-            exit 1
-          fi
-          echo " Prerequisites validated"
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+  # Comment out deploy-staging and deploy-production jobs for manual deployment
+  # deploy-staging:
+  #   name: Automated Staging Deployment
+  #   runs-on: ubuntu-latest
+  #   needs: docker
+  #   if: github.ref == 'refs/heads/develop'
+  #   environment: staging
+  #   steps:
+  #     - name: Check deployment prerequisites
+  #       run: |
+  #         if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
+  #           echo " Cannot deploy - Azure credentials not configured"
+  #           echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+  #           exit 1
+  #         fi
+  #         echo " Prerequisites validated"
+  #     - name: Azure Login
+  #       uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Web App (Container)
-        run: |
-          az webapp config container set \
-            --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} \
-            --resource-group HerRaise_RG \
-            --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
+  #     - name: Deploy to Azure Web App (Container)
+  #       run: |
+  #         az webapp config container set \
+  #           --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} \
+  #           --resource-group HerRaise_RG \
+  #           --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+  #           --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
           
-          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} --resource-group HerRaise_RG
+  #         az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} --resource-group HerRaise_RG
           
-          echo " Staging deployment completed"
-          echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net"
-      - name: Post-Deployment Health Check
-        run: echo "No backend health check. Manual verification required."
-  deploy-production:
-    name: Automated Production Deployment
-    runs-on: ubuntu-latest
-    needs: docker
-    if: github.ref == 'refs/heads/main'
-    environment: production
-    steps:
-      - name: Check deployment prerequisites
-        run: |
-          if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
-            echo " Cannot deploy - Azure credentials not configured"
-            echo " Set up AZURE_CREDENTIALS secret to enable deployment"
-            exit 1
-          fi
-          echo " Prerequisites validated"
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #         echo " Staging deployment completed"
+  #         echo " Staging URL: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net"
+  #     - name: Post-Deployment Health Check
+  #       run: echo "No backend health check. Manual verification required."
+  # deploy-production:
+  #   name: Automated Production Deployment
+  #   runs-on: ubuntu-latest
+  #   needs: docker
+  #   if: github.ref == 'refs/heads/main'
+  #   environment: production
+  #   steps:
+  #     - name: Check deployment prerequisites
+  #       run: |
+  #         if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
+  #           echo " Cannot deploy - Azure credentials not configured"
+  #           echo " Set up AZURE_CREDENTIALS secret to enable deployment"
+  #           exit 1
+  #         fi
+  #         echo " Prerequisites validated"
+  #     - name: Azure Login
+  #       uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Web App (Container)
-        run: |
-          az webapp config container set \
-            --name ${{ env.AZURE_WEBAPP_NAME_PROD }} \
-            --resource-group HerRaise_RG \
-            --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
+  #     - name: Deploy to Azure Web App (Container)
+  #       run: |
+  #         az webapp config container set \
+  #           --name ${{ env.AZURE_WEBAPP_NAME_PROD }} \
+  #           --resource-group HerRaise_RG \
+  #           --docker-custom-image-name ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+  #           --docker-registry-server-url https://${{ env.ACR_NAME }}.azurecr.io
           
-          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_PROD }} --resource-group HerRaise_RG
+  #         az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_PROD }} --resource-group HerRaise_RG
           
-          echo " Production deployment completed"
-          echo " Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
-          echo "Deployed at: $(date)"
-          echo " Commit: ${{ github.sha }}"
-      - name: Production Deployment Validation
-        run: echo "No backend health check. Manual verification required."
+  #         echo " Production deployment completed"
+  #         echo " Production URL: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net"
+  #         echo "Deployed at: $(date)"
+  #         echo " Commit: ${{ github.sha }}"
+  #     - name: Production Deployment Validation
+  #       run: echo "No backend health check. Manual verification required."
   security-compliance:
     name: Security Compliance Report
     runs-on: ubuntu-latest
-    needs: [security, docker, deploy-production]
+    needs: [security, docker]
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Download Security Artifacts
