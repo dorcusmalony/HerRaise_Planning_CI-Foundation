@@ -27,18 +27,18 @@ jobs:
             exit 1
           fi
           if [ ! -f docker-compose.yml ]; then
-            echo "❌ docker-compose.yml missing. Please add a docker-compose.yml to the project root."
+            echo " docker-compose.yml missing. Please add a docker-compose.yml to the project root."
             exit 1
           fi
-          echo "✅ Dockerfile and docker-compose.yml found."
+          echo " Dockerfile and docker-compose.yml found."
 
       - name: Check for Terraform scripts
         run: |
           if ! ls *.tf 1> /dev/null 2>&1; then
-            echo "❌ Terraform scripts (*.tf) missing. Please add Terraform configuration files."
+            echo " Terraform scripts (*.tf) missing. Please add Terraform configuration files."
             exit 1
           fi
-          echo "✅ Terraform scripts found."
+          echo " Terraform scripts found."
 
       - name: Build frontend (static files)
         run: |
