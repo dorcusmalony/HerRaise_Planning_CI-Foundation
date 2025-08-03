@@ -61,6 +61,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Create security-reports directory
+        run: mkdir -p security-reports
+
       - name: Dependency Vulnerability Scanning
         run: echo "No backend dependencies. Skipping npm audit."
       - name: Automated Vulnerability Remediation
