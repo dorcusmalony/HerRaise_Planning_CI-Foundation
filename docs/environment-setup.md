@@ -47,9 +47,7 @@ When a commit is pushed to `main` branch:
 
 ## Environment URLs
 
-The pipeline will automatically set environment URLs:
-- **Staging**: https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net
-- **Production**: https://herraisehub.azurewebsites.net
+
 
 ## Monitoring Integration
 
