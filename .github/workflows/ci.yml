@@ -34,11 +34,11 @@ jobs:
 
       - name: Check for Terraform scripts
         run: |
-          if ! ls *.tf 1> /dev/null 2>&1; then
-            echo " Terraform scripts (*.tf) missing. Please add Terraform configuration files."
+          if ! find terraform -type f -name "*.tf" | grep -q .; then
+            echo "❌ Terraform scripts (*.tf) missing in ./terraform directory. Please add Terraform configuration files."
             exit 1
           fi
-          echo " Terraform scripts found."
+          echo "✅ Terraform scripts found in ./terraform directory."
 
       - name: Build frontend (static files)
         run: |
