@@ -23,25 +23,7 @@ variable "resource_group_name" {
 }
 
 variable "registry_name" {
-  description = "Container registry name"
+  description = "Azure Container Registry name"
   type        = string
-  default     = "herraise"
-}
-
-variable "db_username" {
-  description = "Database username"
-  type        = string
-  default     = "herraise_user"
-}
-
-variable "db_password" {
-  description = "Database password"
-  type        = string
-  sensitive   = true
-}
-
-variable "container_port" {
-  description = "Container port"
-  type        = number
-  default     = 3000
+  default     = "herraiseacr"
 }

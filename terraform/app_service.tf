@@ -26,12 +26,6 @@ resource "azurerm_linux_web_app" "main" {
   }
 
   app_settings = {
-    "NODE_ENV"                        = "production"
-    "PORT"                           = var.container_port
-    "DATABASE_URL"                   = "postgresql://${var.db_username}:${var.db_password}@${azurerm_postgresql_flexible_server.main.fqdn}:5432/herraise_db"
-    "DOCKER_REGISTRY_SERVER_URL"     = "https://${azurerm_container_registry.main.login_server}"
-    "DOCKER_REGISTRY_SERVER_USERNAME" = azurerm_container_registry.main.admin_username
-    "DOCKER_REGISTRY_SERVER_PASSWORD" = azurerm_container_registry.main.admin_password
     "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = "false"
   }
 
