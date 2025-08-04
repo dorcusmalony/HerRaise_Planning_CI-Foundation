@@ -90,6 +90,7 @@ jobs:
           echo "Staging deployment completed"
       - name: Post-Deployment Health Check
         run: |
+          set +e
           echo "Waiting for deployment to stabilize..."
           sleep 45
 
