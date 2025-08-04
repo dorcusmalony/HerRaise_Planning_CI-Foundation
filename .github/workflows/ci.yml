@@ -93,7 +93,8 @@ jobs:
       - name: Post-Deployment Health Check
         run: |
           sleep 20
-          curl -f -s https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net || (echo "Health check failed" && exit 1)
+          # Use root URL for static site health check
+          curl -f -s https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net/ || (echo "Health check failed" && exit 1)
           echo "Staging health check passed"
 
   deploy-production:
