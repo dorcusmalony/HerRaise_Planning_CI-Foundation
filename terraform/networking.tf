@@ -24,16 +24,16 @@ resource "azurerm_subnet" "app" {
     }
   }
 }
-  availability_zone       = data.aws_availability_zones.available.names[count.index]
-  map_public_ip_on_launch = true
 
-  tags = {
-    Name = "${var.project_name}-public-subnet-${count.index + 1}"
-  }
+# Subnet for Database
+resource "azurerm_subnet" "db" {
+  name                 = "${var.project_name}-db-subnet"
+  resource_group_name  = azurerm_resource_group.main.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["10.0.2.0/24"]
+  
+  service_endpoints = ["Microsoft.Sql"]
 }
-
-# Private Subnets
-resource "aws_subnet" "private" {
   count = 2
 
   vpc_id            = aws_vpc.main.id

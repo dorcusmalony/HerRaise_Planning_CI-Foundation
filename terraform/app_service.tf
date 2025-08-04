@@ -26,16 +26,10 @@ resource "azurerm_linux_web_app" "main" {
   }
 
   app_settings = {
-    "NODE_ENV"                        = "production"
-    "PORT"                            = var.container_port
-    "DOCKER_REGISTRY_SERVER_URL"      = "https://${azurerm_container_registry.main.login_server}"
-    "DOCKER_REGISTRY_SERVER_USERNAME" = azurerm_container_registry.main.admin_username
-    "DOCKER_REGISTRY_SERVER_PASSWORD" = azurerm_container_registry.main.admin_password
     "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = "false"
   }
 
   tags = {
     Name = "${var.project_name}-webapp"
   }
-}
 }

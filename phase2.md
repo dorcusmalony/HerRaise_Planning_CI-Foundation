@@ -7,7 +7,8 @@ Phase 2: Containerization & Infrastructure as Code
 
 ## Screenshots of Provisioned Resources
 
-*Live Application*: [Live link to myherraisehub website](https://herraisehub.azurewebsites.net/)
+*Live Application*: [Live link to myherraisehub website](https://herraisehub-fgd0dfawa0bmhxeh.southafricanorth-01.azurewebsites.net/
+)
 
 ## Screenshots of Provisioned Resources
 

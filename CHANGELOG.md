@@ -46,6 +46,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Logging**: Comprehensive request/response tracking
 - **Alerts**: 3 operational alarms configured
 
+---
+
+> **Note:** All releases and version changes are now managed and documented automatically by the CI/CD pipeline. See pipeline logs and release tags for details.
+
 
 
 

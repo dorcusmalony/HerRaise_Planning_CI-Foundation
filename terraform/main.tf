@@ -11,18 +11,3 @@ terraform {
 provider "azurerm" {
   features {}
 }
-
-# Data sources
-data "azurerm_client_config" "current" {}
-      Environment = var.environment
-      ManagedBy   = "Terraform"
-    }
-  }
-}
-
-# Data sources
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
-data "aws_caller_identity" "current" {}
