@@ -68,7 +68,6 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
@@ -91,11 +90,21 @@ jobs:
           echo "Staging deployment completed"
       - name: Post-Deployment Health Check
         run: |
-          sleep 20
-          # Use root URL for static site health check
-          curl -f -s https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net/ || (echo "Health check failed" && exit 1)
-          echo "Staging health check passed"
-
+          echo "Waiting for deployment to stabilize..."
+          sleep 30
+          
+          # Health check with retries
+          for i in {1..5}; do
+            echo "Health check attempt $i/5"
+            if curl -f -s -L --max-time 30 https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net/ > /dev/null; then
+              echo "Staging health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed, waiting 15 seconds..."
+            sleep 15
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
@@ -122,9 +131,21 @@ jobs:
           echo "Production deployment completed"
       - name: Post-Deployment Health Check
         run: |
-          sleep 20
-          curl -f -s https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net || (echo "Health check failed" && exit 1)
-          echo "Production health check passed"
+          echo "Waiting for deployment to stabilize..."
+          sleep 30
+          
+          # Health check with retries
+          for i in {1..5}; do
+            echo "Health check attempt $i/5"
+            if curl -f -s -L --max-time 30 https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net/ > /dev/null; then
+              echo "Production health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed, waiting 15 seconds..."
+            sleep 15
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
       - name: Monitoring & Alarms Documentation
         run: |
           echo "Monitoring is configured via Azure Application Insights and Azure Monitor."
