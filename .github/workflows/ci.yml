@@ -68,7 +68,6 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
-
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
@@ -93,12 +92,10 @@ jobs:
           az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} --resource-group HerRaise_RG
           echo "Staging deployment completed"
       - name: Post-Deployment Health Check
-      continue-on-error: true
         run: |
           set +e
           echo "Waiting for deployment to stabilize..."
           sleep 45
-
           # Health check with retries and debug output
           for i in {1..8}; do
             echo "Health check attempt $i/8"
@@ -113,7 +110,6 @@ jobs:
           done
           echo "WARNING: Health check failed after 8 attempts, but continuing deployment for staging."
           exit 0
-
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
