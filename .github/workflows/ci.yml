@@ -11,7 +11,6 @@ env:
   AZURE_WEBAPP_NAME_STAGING: herraise-app-staging
   ACR_NAME: herraise
   IMAGE_NAME: herraise-static
-
 jobs:
   build-test:
     name: Build and Test Static Site
