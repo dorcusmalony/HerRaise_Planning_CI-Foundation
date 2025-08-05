@@ -11,6 +11,7 @@ env:
   AZURE_WEBAPP_NAME_STAGING: herraise-app-staging
   ACR_NAME: herraise
   IMAGE_NAME: herraise-static
+
 jobs:
   build-test:
     name: Build and Test Static Site
@@ -68,11 +69,15 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: docker
-    if: github.ref == 'refs/heads/develop'
+    # FIXED: Deploy to staging on push to develop OR pull request targeting develop
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/develop') ||
+      (github.event_name == 'pull_request' && github.base_ref == 'develop')
     environment: staging
     steps:
       - name: Azure Login
@@ -108,11 +113,15 @@ jobs:
           done
           echo "WARNING: Health check failed after 8 attempts, but continuing deployment for staging."
           exit 0
+
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
     needs: docker
-    if: github.ref == 'refs/heads/main'
+    # FIXED: Deploy to production on push to main OR pull request targeting main
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.base_ref == 'main')
     environment:
       name: production
       url: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net
