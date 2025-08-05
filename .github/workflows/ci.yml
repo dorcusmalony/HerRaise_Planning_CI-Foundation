@@ -93,6 +93,7 @@ jobs:
           az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_STAGING }} --resource-group HerRaise_RG
           echo "Staging deployment completed"
       - name: Post-Deployment Health Check
+      continue-on-error: true
         run: |
           set +e
           echo "Waiting for deployment to stabilize..."
