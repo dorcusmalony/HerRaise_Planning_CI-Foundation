@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2025.01.15] - 2025-01-15
+
 
 
 
@@ -36,15 +36,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Professional API responses with timestamps
 
 ### 🔗 Live URLs
-- **Production**: https://herraisehub.azurewebsites.net
-- **Staging**: https://herraise-app-staging.azurewebsites.net
+- **Production**: https://herraisehub-fgd0dfawa0bmhxeh.southafricanorth-01.azurewebsites.net/
 
-### 📊 Technical Details
+- **Staging**: https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net/
+
+
+###  Technical Details
 - **Deployment**: Fully automated CI/CD pipeline
 - **Monitoring**: Application Insights + Custom Dashboard
 - **Security**: Multi-layer scanning with Trivy + npm audit
 - **Logging**: Comprehensive request/response tracking
-- **Alerts**: 3 operational alarms configured
+- **Alerts**: 2 operational alarms configured
 
 
 
