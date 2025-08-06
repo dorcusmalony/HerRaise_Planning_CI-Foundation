@@ -1,0 +1,188 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+      sha: ${{ steps.release.outputs.sha }}
+      pr_created: ${{ steps.release.outputs.pr_created }}
+      pr_number: ${{ steps.release.outputs.pr_number }}
+    steps:
+      - name: Run Release Please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: simple
+          # Removed invalid 'changelog-sections' input as it is not supported by release-please-action
+
+  # Post-release actions when a new release is created
+  post-release-actions:
+    needs: release-please
+    runs-on: ubuntu-latest
+    if: needs.release-please.outputs.release_created == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Release Information
+        id: release_info
+        run: |
+          echo " New Release Created!"
+          echo "Version: ${{ needs.release-please.outputs.version }}"
+          echo "Tag: ${{ needs.release-please.outputs.tag_name }}"
+          echo "SHA: ${{ needs.release-please.outputs.sha }}"
+          
+          # Get commit information for the release
+          COMMIT_COUNT=$(git rev-list --count HEAD)
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "Initial Release")
+          
+          echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
+          echo "previous_tag=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+
+      - name: Create Deployment Summary
+        run: |
+          # Create a deployment summary for this release
+          cat > release-deployment-summary.md << EOF
+          #  Release ${{ needs.release-please.outputs.version }} Deployment Summary
+          
+          **Release Information:**
+          -  **Version**: \`${{ needs.release-please.outputs.version }}\`
+          -  **Tag**: \`${{ needs.release-please.outputs.tag_name }}\`
+          -  **Commit**: \`${{ needs.release-please.outputs.sha }}\`
+          -  **Release Date**: \`$(date '+%Y-%m-%d %H:%M:%S UTC')\`
+          -  **Total Commits**: \`${{ steps.release_info.outputs.commit_count }}\`
+          -  **Previous Version**: \`${{ steps.release_info.outputs.previous_tag }}\`
+          
+          **Deployment Status:**
+          -  **Production Deployment**: Will be triggered automatically by CI/CD
+          -  **Production URL**: [https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net](https://herraisehub.azurewebsites.net)
+          -  **Monitoring**: Azure Application Insights and Azure Monitor configured
+          
+          **What happens next:**
+          1.  This release will trigger the main CI/CD pipeline
+          2.  Docker image will be built and pushed to Azure Container Registry
+          3.  Automatic deployment to production environment
+          4.  Health checks will verify the deployment
+          5.  Deployment status will be updated
+          
+          **Verification Steps:**
+          - [ ] Visit production URL to confirm deployment
+          - [ ] Check GitHub Actions for deployment status
+          - [ ] Verify all features are working as expected
+          - [ ] Monitor application performance and logs
+          
+          ---
+          *This release was automatically created by Release Please based on conventional commits.*
+          EOF
+          
+          echo "Release deployment summary created"
+
+      - name: Update Release with Deployment Info
+        run: |
+          # Add deployment information to the GitHub release
+          gh release edit ${{ needs.release-please.outputs.tag_name }} \
+            --notes-file release-deployment-summary.md \
+            --title " HerRaise v${{ needs.release-please.outputs.version }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Deployment Tracking Issue
+        run: |
+          # Create an issue to track the deployment of this release
+          gh issue create \
+            --title " Track Deployment: Release ${{ needs.release-please.outputs.version }}" \
+            --body "
+          ## Deployment Tracking for Release ${{ needs.release-please.outputs.version }}
+          
+          This issue tracks the deployment of release \`${{ needs.release-please.outputs.version }}\` to production.
+          
+          **Release Details:**
+          -  **Tag**: \`${{ needs.release-please.outputs.tag_name }}\`
+          -  **Commit**: \`${{ needs.release-please.outputs.sha }}\`
+          -  **Released**: $(date '+%Y-%m-%d %H:%M:%S UTC')
+          
+          **Deployment Checklist:**
+          - [ ] CI/CD pipeline triggered
+          - [ ] Docker image built successfully
+          - [ ] Deployed to production
+          - [ ] Health checks passed
+          - [ ] Manual verification completed
+          - [ ] Monitoring alerts configured
+          
+          **Links:**
+          -  [Production Site](https://herraisehub-fgd0dfawa0bmhxeh.southafricanorth-01.azurewebsites.net/)
+          -  [GitHub Actions](https://github.com/${{ github.repository }}/actions)
+          -  [Azure Portal](https://portal.azure.com)
+          
+          This issue will be automatically closed once deployment is verified.
+          " \
+            --label "deployment,release" \
+            --assignee "${{ github.actor }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Announce Release
+        run: |
+          echo "
+          ╔══════════════════════════════════════════════════════════════╗
+          ║                     NEW RELEASE CREATED                  ║
+          ╠══════════════════════════════════════════════════════════════╣
+          ║                                                              ║
+          ║   Version: ${{ needs.release-please.outputs.version }}                                      ║
+          ║    Tag: ${{ needs.release-please.outputs.tag_name }}                                        ║
+          ║   Commit: ${{ needs.release-please.outputs.sha }}                      ║
+          ║   Date: $(date '+%Y-%m-%d %H:%M:%S UTC')                            ║
+          ║                                                              ║
+          ║   Production deployment will start automatically!         ║
+          ║                                                              ║
+          ║   Release URL:                                             ║
+          ║     https://github.com/${{ github.repository }}/releases/tag/${{ needs.release-please.outputs.tag_name }} ║
+          ║                                                              ║
+          ║   Production Site:                                         ║
+          ║     https://herraisehub.azurewebsites.net                   ║
+          ║                                                              ║
+          ╚══════════════════════════════════════════════════════════════╝
+          "
+
+  # Show information about Release Please PR if one was created
+  release-pr-info:
+    needs: release-please
+    runs-on: ubuntu-latest
+    if: needs.release-please.outputs.pr_created == 'true'
+    steps:
+      - name: Release PR Information
+        run: |
+          echo "
+          ╔══════════════════════════════════════════════════════════════╗
+          ║                   RELEASE PR CREATED                    ║
+          ╠══════════════════════════════════════════════════════════════╣
+          ║                                                              ║
+          ║  A Release Please PR has been created with version bumps    ║
+          ║  and changelog updates.                                      ║
+          ║                                                              ║
+          ║  🔗 PR Number: #${{ needs.release-please.outputs.pr_number }}                                    ║
+          ║                                                              ║
+          ║   Next Steps:                                              ║
+          ║  1. Review the PR for version and changelog accuracy        ║
+          ║  2. Merge the PR to trigger the release                     ║
+          ║  3. The CI/CD pipeline will deploy automatically            ║
+          ║                                                              ║
+          ║   View PR:                                                 ║
+          ║     https://github.com/${{ github.repository }}/pull/${{ needs.release-please.outputs.pr_number }}        ║
+          ║                                                              ║
+          ╚══════════════════════════════════════════════════════════════╝
+          "
