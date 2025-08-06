@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0 (2025-08-06)
+
+
+### Features
+
+* initialize HerRaise MVP foundation ([#14](https://github.com/dorcusmalony/HerRaise_Planning_CI-Foundation/issues/14)) ([92ac146](https://github.com/dorcusmalony/HerRaise_Planning_CI-Foundation/commit/92ac146460dd2e30f6743efb7c2213891093ced6))
+
+## Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -47,11 +56,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Security**: Multi-layer scanning with Trivy + npm audit
 - **Logging**: Comprehensive request/response tracking
 - **Alerts**: 2 operational alarms configured
-
-
-
-
-
-
-
-
