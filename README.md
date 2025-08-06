@@ -6,7 +6,6 @@
 
 HerRaise is a web-based mentorship platform designed to address the unique challenges faced by girls and young women in South Sudan. This MVP demonstrates professional software development practices including CI/CD, containerization, and Infrastructure as Code.
 
-
 ## Target Impact
 
 - **Primary Users**: South Sudanese girls aged 10-28 seeking mentorship and educational resources
@@ -16,27 +15,22 @@ HerRaise is a web-based mentorship platform designed to address the unique chall
 ## Technical Architecture
 
 ```
-Frontend (Static) → Node.js API → PostgreSQL Database
-       ↓                ↓                ↓
-     Docker           Docker           Docker
-       ↓                ↓                ↓
-Azure App Service → Container Registry → Azure Database
+Frontend (Static HTML/CSS/JS)
+        ↓
+Docker Container
+        ↓
+Azure App Service (Linux containers)
 ```
 
 ### Tech Stack
 
-| Layer | Technology |
-|-------|------------|
+| Layer        | Technology           |
+|--------------|---------------------|
 | **Frontend** | HTML, CSS, JavaScript |
-| **Backend** | Node.js + Express.js |
-| **Database** | PostgreSQL |
-| **Testing** | Jest + Supertest |
-| **Containerization** | Docker + Docker Compose |
+| **Containerization** | Docker |
 | **Infrastructure** | Terraform (Azure) |
-| **CI/CD** | GitHub Actions |
-
-
-
+| **CI/CD**    | GitHub Actions      |
+| **Security** | Trivy, npm audit    |
 
 ### Production Deployment
 
@@ -55,24 +49,21 @@ chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 - [x] **Phase 3**: Continuous Deployment Pipeline
 - [x] **Phase 4**: Monitoring & Security Hardening
 
-##  Live Environments
+## Live Environments
 
-| Environment | URL | Purpose | Auto-Deploy |
-|-------------|-----|---------|-------------|
-| **Production** | [herraisehub.azurewebsites.net](https://herraisehub.azurewebsites.net) | Live platform for users |  `main` branch |
-| **Staging** | [herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net](https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net) | Testing & validation |  `develop` branch |
-
+| Environment   | URL                                                                 | Purpose             | Auto-Deploy     |
+|---------------|---------------------------------------------------------------------|---------------------|-----------------|
+| **Production**| [herraisehub.azurewebsites.net](https://herraisehub-fgd0dfawa0bmhxeh.southafricanorth-01.azurewebsites.net/) | Live platform       | `main` branch   |
+| **Staging**   | [herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net](https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net/) | Testing & validation | `develop` branch |
 
 ## Repository Structure
 
 ```
-├── frontend/              # Client-side application
-├── backend/               # REST API server
-├── database/              # Schema & migrations
+├── frontend/              # Static site source (HTML, CSS, JS)
 ├── terraform/             # Infrastructure as Code
 ├── .github/workflows/     # CI/CD automation
-├── docker-compose.yml     # Local development
-└── Dockerfile            # Production container
+├── docker-compose.yml     # Local development (optional)
+└── Dockerfile             # Production container
 ```
 
 ## Contributing
@@ -80,89 +71,53 @@ chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 ### Workflow
 
 1. Create feature branch from `develop`
-2. Implement with test coverage
-3. Submit Pull Request to `main`
+2. Implement and test your changes
+3. Submit Pull Request to `develop`
 4. Pass CI checks + peer review
-5. Deploy via automated pipeline
+5. Merge to `main` for production deployment
 
 ### Code Quality Standards
 
 - ESLint + Prettier formatting
-- Jest unit tests (>80% coverage)
+- Automated lint/test steps in CI
 - Docker build verification
-- Security vulnerability scanning
+- Security vulnerability scanning (Trivy, npm audit)
 
 ## Environment Configuration
 
-```bash
-# Local development (.env)
-NODE_ENV=development
-PORT=3000
-DATABASE_URL=postgresql://herraise_user:herraise_password@localhost:5432/herraise_db
-
-# Production (Azure - managed via Terraform)
-NODE_ENV=production
-DATABASE_URL=${azurerm_postgresql_flexible_server.connection_string}
-AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
-```
+No backend or database configuration required for static frontend.
 
 ## Infrastructure Components
 
-| Resource | Purpose | Azure Service |
-|----------|---------|---------------|
-| **Virtual Network** | Secure networking | Azure Virtual Network with subnets |
-| **Container Registry** | Docker image storage | Azure Container Registry (ACR) |
-| **App Service** | Web application hosting | Azure App Service (Linux containers) |
-| **PostgreSQL** | Database service | Azure Database for PostgreSQL Flexible Server |
-| **Resource Group** | Resource management | Azure Resource Group |
+| Resource            | Purpose                   | Azure Service                |
+|---------------------|---------------------------|------------------------------|
+| **App Service**     | Web application hosting   | Azure App Service (Linux)    |
+| **Container Registry** | Docker image storage   | Azure Container Registry (ACR)|
+| **Resource Group**  | Resource management       | Azure Resource Group         |
 
-##  Security & DevSecOps
-
-
-
+## Security & DevSecOps
 
 ### Automated Security Scanning
-- ✅ **Dependency Vulnerability Scanning** - npm audit with critical/high severity detection
-- ✅ **Container Image Security** - Trivy scanning for container vulnerabilities
-- ✅ **Static Application Security Testing (SAST)** - Code vulnerability analysis
+- ✅ **Dependency Vulnerability Scanning** - npm audit
+- ✅ **Container Image Security** - Trivy scanning
 - ✅ **Infrastructure Security** - Terraform security validation
 
-
 ### Security Policies
--  Branch protection on `main` branch with required reviews
--  Mandatory security scans before deployment
--  HTTPS enforcement in all environments
--  Environment variable encryption via Azure Key Vault
--  Automated security reporting and artifact retention
+- Branch protection on `main` branch with required reviews
+- Mandatory security scans before deployment
+- HTTPS enforcement in all environments
+- Automated security reporting and artifact retention
 
-
-
-
-
-
-
-
-
-
-
-##  Monitoring & Observability
+## Monitoring & Observability
 
 ### Application Monitoring
 - **Application Insights** - Real-time performance monitoring
-- **Custom Dashboard** - Visual monitoring interface
 - **Health Checks** - Automated endpoint monitoring
-- **Application Logging** - Comprehensive request/response logging
 
 ### Operational Alarms
-1. **High Response Time Alert** - Triggers when avg response > 5 seconds
-2. **Low Availability Alert** - Monitors application uptime
-3. **High Error Rate Alert** - Detects elevated 5xx error rates
-
-### Logging Configuration
-- **Application Logs** - Request/response tracking with timestamps
-- **System Metrics** - Memory, CPU, and performance data
-- **Error Tracking** - Comprehensive error logging and reporting
-- **Retention Policy** - Automated log retention and cleanup
+- **High Response Time Alert** - Triggers when avg response > 5 seconds
+- **Low Availability Alert** - Monitors application uptime
+- **High Error Rate Alert** - Detects elevated 5xx error rates
 
 ## Support & Documentation
 
@@ -172,43 +127,7 @@ AZURE_CONTAINER_REGISTRY=${azurerm_container_registry.login_server}
 
 ---
 
-## Phase 1: Foundation & CI/CD Pipeline ✅
-
-This repository meets all phase one requirements:
-
-- **Project Planning & Management**:  
-  - [Project Board](<insert-your-project-board-link-here>) tracks all major milestones and tasks.
-  - Issues/Epics for "Containerization," "IaC," "CD Pipeline," and more are created and managed.
-
-- **Secure Repository Setup**:  
-  - Main and develop branches established.
-  - Branch protection rules require PRs, reviews, and CI status checks before merging.
-
-- **Application Development & CI**:  
-  - Baseline application (frontend, backend, database) implemented.
-  - Automated CI pipeline (GitHub Actions) runs lint and unit tests on every PR.
-  - See [Development Workflow](#development-workflow) and [Quick Start](#quick-start) for setup instructions.
-
-> **Repository:** [GitHub Repository](<insert-your-repo-link-here>)  
-> **Project Board:** [Project Board](<insert-your-project-board-link-here>)
-
----
-
-
-
 **License**: MIT | **Team**: HerRaise Development Team
-./scripts/deploy.sh
-```
-
-
-
-
-# Azure-specific variables (set via Terraform in production)
-AZURE_RESOURCE_GROUP=herraise-RG
-AZURE_CONTAINER_REGISTRY=herraiseacr.azurecr.io
-```
-
-
 
 ### Deployment Strategy
 - **Staging**: Auto-deploy on `develop` branch push
@@ -217,7 +136,7 @@ AZURE_CONTAINER_REGISTRY=herraiseacr.azurecr.io
 - **Rollback**: Automated rollback on health check failures
 
 ### Pipeline Features
-- ✅ **Automated Testing** - Jest unit tests with coverage reporting
+- ✅ **Automated Testing** - Lint/test steps
 - ✅ **Code Quality** - ESLint and formatting validation
 - ✅ **Security Scanning** - Multi-layer vulnerability detection
 - ✅ **Container Security** - Image vulnerability scanning
@@ -225,146 +144,8 @@ AZURE_CONTAINER_REGISTRY=herraiseacr.azurecr.io
 - ✅ **Health Monitoring** - Post-deployment validation
 - ✅ **Documentation Updates** - Automated CHANGELOG and README updates
 
-## Pipeline Testing Protocol
-
-### Immediate Next Steps
-```bash
-# 1. Create test branch
-git checkout -b test-pipeline-fix
-git add .
-git commit -m "test: validate CI pipeline after fixes"
-git push origin test-pipeline-fix
-
-# 2. Create Pull Request via GitHub UI
-# 3. Monitor GitHub Actions tab for pipeline execution
-# 4. Verify all checks show green checkmarks
-# 5. Test merge capability
-
-
-### What to Watch For
--  **Linting**: ESLint checks pass without errors
--  **Formatting**: Prettier validation succeeds
--  **Testing**: Jest unit tests execute successfully
--  **Build**: Docker container builds without issues
--  **Security**: Vulnerability scans complete (may have warnings)
--  **Merge**: "Merge pull request" button becomes enabled
-
-
-```
-
-### Managing Failed Pull Requests
-
-**Option 1: Reuse the Failed PR (Recommended)**
-```bash
-# Switch to the failed PR branch
-git checkout <failed-branch-name>
-# Make your fixes
-git add .
-git commit -m "fix: resolve CI pipeline issues"
-git push origin <failed-branch-name>
-# Pipeline automatically re-runs on the same PR
-```
-
-
-
-**Recommendation**: Reuse your failed PR by pushing new commits to fix the issues. This maintains the history and shows the progression from failure to success.
-
-## Next Testing Steps
-
-### Phase 1 Validation Checklist
--  **CI Pipeline Test**: Create test PR to verify all GitHub Actions workflows
--  **Local Docker Test**: Ensure `docker-compose up -d` works completely
--  **Database Connectivity**: Validate PostgreSQL connection and schema
--  **API Health Check**: Test `/api/health` endpoint functionality
--  **Frontend Integration**: Verify frontend serves and connects to backend
-
-### Phase 2 Preparation Tests
--  **Terraform Validation**: Run `terraform plan` to verify infrastructure code
--  **Container Registry**: Test Azure ACR authentication and push
--  **Azure App Service**: Validate container deployment capability
--  **Network Security**: Test VNet integration and subnet isolation
--  **Database Migration**: Verify PostgreSQL schema deployment
-
-### Testing Commands
-
-```bash
-# Local environment validation
-docker-compose up -d
-curl http://localhost:3000/api/health
-npm test
-
-# Infrastructure dry-run
-cd terraform
-terraform init
-terraform plan
-
-# Container build test
-docker build -t herraise:test .
-docker run -p 3000:3000 herraise:test
-
-
-
-### Expected Outcomes
-| Test | Success Criteria |
-|------|------------------|
-| **CI Pipeline** | All GitHub Actions pass green |
-| **Local Docker** | App accessible at localhost:3000 |
-| **Database** | Connection successful, tables created |
-| **Terraform** | Plan executes without errors |
-| **Container** | Image builds and runs successfully |
-
-
-
-### Docker Compose Issues
-```bash
-# Reset containers
-docker-compose down -v
-docker-compose up -d --build
-
-# Check logs
-docker-compose logs backend
-docker-compose logs database
-```
-
-### Azure Terraform Issues
-```bash
-# Azure CLI login
-az login
-az account set --subscription <subscription-id>
-
-# Terraform debugging
-terraform plan -detailed-exitcode
-terraform validate
-```
-
-
-
-
 ## Monitoring Dashboard
 
-- **Application Insights**: [Azure Portal - HerRaise Monitoring](https://portal.azure.com/#@/resource/subscriptions/{subscription-id}/resourceGroups/HerRaise_RG/providers/microsoft.insights/components/herraise-insights/overview)
+- **Application Insights**: [Azure Portal - HerRaise Monitoring](https://portal.azure.com/#view/Microsoft_Azure_Monitoring_Alerts/AlertRulesBlade/resourceId/%2Fsubscriptions%2Ff2b10cdf-8f93-48de-a471-6a3de572f857%2FresourceGroups%2FHerRaise_RG%2Fproviders%2FMicrosoft.Web%2Fsites%2Fherraisehub
+)
 - **Operational Alarms**: Configured for response time > 5 seconds
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
