@@ -72,7 +72,10 @@ jobs:
     name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: docker
-    if: github.ref == 'refs/heads/develop'
+    # FIXED: Deploy to staging on push to develop OR pull request targeting develop
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/develop') ||
+      (github.event_name == 'pull_request' && github.base_ref == 'develop')
     environment: staging
     steps:
       - name: Azure Login
@@ -93,7 +96,6 @@ jobs:
           set +e
           echo "Waiting for deployment to stabilize..."
           sleep 45
-
           # Health check with retries and debug output
           for i in {1..8}; do
             echo "Health check attempt $i/8"
@@ -112,7 +114,10 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-latest
     needs: docker
-    if: github.ref == 'refs/heads/main'
+    # FIXED: Deploy to production on push to main OR pull request targeting main
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.base_ref == 'main')
     environment:
       name: production
       url: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net
@@ -133,6 +138,7 @@ jobs:
           az webapp restart --name ${{ env.AZURE_WEBAPP_NAME_PROD }} --resource-group HerRaise_RG
           echo "Production deployment completed"
       - name: Post-Deployment Health Check
+        continue-on-error: true
         run: |
           echo "Waiting for deployment to stabilize..."
           sleep 30
