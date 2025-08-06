@@ -1,5 +1,7 @@
 # HerRaise - Mentorship & Empowerment Platform
 
+[Vedo_demo](https://herraisehub-fgd0dfawa0bmhxeh.southafricanorth-01.azurewebsites.)
+
 > Empowering South Sudanese girls and young women (ages 10-28) through digital mentorship, inspirational storytelling, and community support.
 
 ## Overview
@@ -138,6 +140,5 @@ No backend or database configuration required for static frontend.
 
 ## Monitoring Dashboard
 
-- **Application Insights**: [Azure Portal - HerRaise Monitoring](https://portal.azure.com/#view/Microsoft_Azure_Monitoring_Alerts/AlertRulesBlade/resourceId/%2Fsubscriptions%2Ff2b10cdf-8f93-48de-a471-6a3de572f857%2FresourceGroups%2FHerRaise_RG%2Fproviders%2FMicrosoft.Web%2Fsites%2Fherraisehub
-)
+- **Application Insights**: [Azure Portal - HerRaise Monitoring](https://portal.azure.com/#@adichdorcusoutlook.onmicrosoft.com/resource/subscriptions/f2b10cdf-8f93-48de-a471-6a3de572f857/resourceGroups/HerRaise_RG/providers/microsoft.insights/components/herraise-app-staging202508061901/overview)
 - **Operational Alarms**: Configured for response time > 5 seconds
