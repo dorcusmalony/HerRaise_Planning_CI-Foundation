@@ -56,15 +56,7 @@ chmod +x scripts/deploy.sh && ./scripts/deploy.sh
 | **Production**| [herraisehub.azurewebsites.net](https://herraisehub-fgd0dfawa0bmhxeh.southafricanorth-01.azurewebsites.net/) | Live platform       | `main` branch   |
 | **Staging**   | [herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net](https://herraise-app-staging-fvgkc9cyatfyfehm.southafricanorth-01.azurewebsites.net/) | Testing & validation | `develop` branch |
 
-## Repository Structure
 
-```
-├── frontend/              # Static site source (HTML, CSS, JS)
-├── terraform/             # Infrastructure as Code
-├── .github/workflows/     # CI/CD automation
-├── docker-compose.yml     # Local development (optional)
-└── Dockerfile             # Production container
-```
 
 ## Contributing
 
