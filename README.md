@@ -1,6 +1,6 @@
 # HerRaise - Mentorship & Empowerment Platform
 
-[Vedo_demo](https://herraisehub-fgd0dfawa0bmhxeh.southafricanorth-01.azurewebsites.)
+[Vedo_demo](https://drive.google.com/file/d/1FUzq16QbD7RX3zFvcvBQkjszXA7-S6BA/view?usp=sharing)
 
 > Empowering South Sudanese girls and young women (ages 10-28) through digital mentorship, inspirational storytelling, and community support.
 
